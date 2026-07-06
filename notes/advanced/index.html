@@ -934,6 +934,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="LaTeX formulas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matplotlib-mathtext-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matplotlib Mathtext Limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2379,6 +2396,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="LaTeX formulas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#matplotlib-mathtext-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Matplotlib Mathtext Limitations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2567,6 +2601,12 @@
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">en</span><span class="o">.</span><span class="n">formula_block</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\int_a^b f(x)\, dx = F(b) - F(a)&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>These use matplotlib's mathtext engine (no LaTeX installation required).</p>
+<h3 id="matplotlib-mathtext-limitations">Matplotlib Mathtext Limitations<a class="headerlink" href="#matplotlib-mathtext-limitations" title="Permanent link">&para;</a></h3>
+<p>Since inline math uses matplotlib's internal mathtext parser (rather than a full-scale LaTeX compiler), there are a few syntax constraints:
+* <strong>No short-form inequality macros</strong>: Use <code>\geq</code> and <code>\leq</code> instead of <code>\ge</code> and <code>\le</code>.
+* <strong>No <code>\iff</code> and extensible arrows</strong>: Use <code>\Leftrightarrow</code> instead of <code>\iff</code>, and use <code>\overset{label}{\rightarrow}</code> instead of extensible arrows like <code>\xrightarrow{label}</code>.
+* <strong>No <code>\pmod</code></strong>: Use <code>\ (\mathrm{mod}\ N)</code> instead of <code>\pmod{N}</code> or <code>\pmod N</code>.
+* <strong>Set vertical bars</strong>: Use <code>\vert</code> or <code>\mid</code> for vertical bars in sets.</p>
 <h2 id="references-and-index">References and index<a class="headerlink" href="#references-and-index" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">en</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="s2">&quot;Advanced Sorting&quot;</span><span class="p">)</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>

@@ -2725,6 +2725,10 @@
 <div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">en</span><span class="o">.</span><span class="n">formula</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;E = mc^2&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#fbbf24&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mf">14.0</span><span class="p">)</span>
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">en</span><span class="o">.</span><span class="n">formula_block</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#38bdf8&quot;</span><span class="p">)</span>
 </span></code></pre></div>
+<blockquote>
+<p>[!NOTE]
+<strong>Matplotlib Mathtext Limitations</strong>: Inline math uses matplotlib's internal mathtext engine rather than a full LaTeX compiler. Therefore, you must use full macros like <code>\geq</code> and <code>\leq</code> instead of <code>\ge</code> and <code>\le</code>, <code>\Leftrightarrow</code> instead of <code>\iff</code>, <code>\ (\mathrm{mod}\ N)</code> instead of <code>\pmod{N}</code>, and <code>\overset{label}{\rightarrow}</code> instead of extensible arrows like <code>\xrightarrow{label}</code>.</p>
+</blockquote>
 <h2 id="what-to-read-next">What to read next<a class="headerlink" href="#what-to-read-next" title="Permanent link">&para;</a></h2>
 <div class="grid cards">
 <ul>
