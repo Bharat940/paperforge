@@ -40,7 +40,7 @@ description: Generate beautiful PDFs, notes, diagrams, slides, and flashcards fr
 
 -   :material-language-markdown: **Markdown CLI**
 
-    `Engrapha notes.md --theme catppuccin-mocha` — no Python required
+    `engrapha notes.md --theme catppuccin-mocha` — no Python required
 
 -   :material-lock: **Zero Dependencies**
 

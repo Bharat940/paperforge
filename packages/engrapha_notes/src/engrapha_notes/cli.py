@@ -64,6 +64,7 @@ def format_inline_markdown(text: str) -> str:
     escaped = escaped.replace("&lt;u&gt;", "<u>").replace("&lt;/u&gt;", "</u>")
 
     code_spans: list[str] = []
+
     def _code_repl(m: re.Match[str]) -> str:
         code_spans.append(m.group(1))
         return f"@@CODE{len(code_spans)-1}@@"
@@ -654,8 +655,7 @@ def parse_markdown_lines(content_lines: List[str]) -> None:
         if in_table and table_header:
             formatted_header = [format_inline_markdown(h) for h in table_header]
             formatted_rows = [
-                [format_inline_markdown(cell) for cell in row]
-                for row in table_rows
+                [format_inline_markdown(cell) for cell in row] for row in table_rows
             ]
             en.info_table(formatted_header, formatted_rows)
             table_rows.clear()
@@ -742,9 +742,7 @@ def parse_markdown_lines(content_lines: List[str]) -> None:
             if parts and parts[-1] == "":
                 parts = parts[:-1]
             if len(parts) >= 2:
-                is_separator = all(
-                    re.match(r"^:?-+:?$", p) for p in parts
-                )
+                is_separator = all(re.match(r"^:?-+:?$", p) for p in parts)
                 if is_separator:
                     in_table = True
                     idx += 1
@@ -838,12 +836,452 @@ def parse_markdown_lines(content_lines: List[str]) -> None:
     flush_table()
 
 
+def print_package_help() -> None:
+    """Print comprehensive package usage guide and API documentation to stdout."""
+    guide = """================================================================================
+                       ENGRAPHA SUITE DOCUMENTATION
+================================================================================
+
+Welcome to the Engrapha Suite. This utility includes:
+  1. engrapha_notes: A themed ReportLab notes generator API.
+  2. engrapha_diagrams: A vector-native diagram builder API.
+  3. engrapha/pdfnotes CLI: A markdown-to-PDF notes compiler.
+
+For standalone diagrams API and DSL reference, run:
+  engrapha-diagram  (or engrapha-diagrams, engrapha_diagram, pdfdiagram)
+
+--------------------------------------------------------------------------------
+1. PYTHON NOTES API REFERENCE (engrapha_notes)
+--------------------------------------------------------------------------------
+import engrapha_notes as en
+
+THEMES:
+  Preset themes: en.DARK, en.LIGHT, en.OCEAN_DARK, en.FOREST_DARK, en.SUNSET_DARK,
+  en.MIDNIGHT_DARK, en.OCEAN_LIGHT, en.SEPIA, en.CATPPUCCIN_LATTE, en.CATPPUCCIN_MOCHA,
+  en.LINEAR, en.NOTION, en.GITHUB, en.ACADEMIC, en.TEXTBOOK.
+
+  - en.set_theme(theme_obj)
+    Applies the theme. Custom themes can be created using `ThemeBuilder` or:
+      my_theme = en.LIGHT.copy_with(name="Custom", body_font="Times-Roman")
+  - en.get_theme() -> NotesTheme
+    Returns current theme metadata and styles.
+
+GLOBAL FORMATTING & LAYOUT:
+  - en.set_global_header(left="", center="", right="")
+    Configures the page header running text.
+  - en.set_global_footer(left="", center="", right="", show_page_num=True)
+    Configures the page footer running text.
+  - en.suppress_header(page_only=True)
+    Hides page headers on the active page (or all pages if page_only=False).
+  - en.suppress_footer(page_only=True)
+    Hides page footers on the active page (or all pages if page_only=False).
+
+COVER PAGES:
+  - en.cover_preset(preset_name, title, subtitle="", author="", date="")
+    Presets: 'engineering', 'research-paper', 'course-notes', 'networking', 'database', 'programming'.
+  - en.cover_card(title, subtitle="", author="", date="", cover_theme="linear", icon="", tags=[],
+                  logo_svg=None, logo_width=120.0, banner_svg=None, banner_width=400.0, banner_align="left")
+    Themes: linear, notion, catppuccin, textbook, modern, minimal, corporate, academic, book.
+  - en.cover_image(path, opacity=0.06, placement="background")
+    Faint SVG background backdrop.
+
+HEADINGS & PAGE NAVIGATION:
+  - en.toc(style="standard", col_widths=None)
+    Renders TOC. Style: 'standard' or 'index' (grid-based).
+  - en.part_box(title, subtitle="", topics=[])
+    Full-page part separator screen.
+  - en.chap_box(title, subtitle="")
+    Chapter title block.
+  - en.section(title)
+    Section header.
+  - en.subsection(title)
+    Subsection header.
+  - en.br()
+    Forces a page break.
+  - en.sp(height_in_points)
+    Inserts a vertical spacer.
+
+BODY ELEMENTS & CALLOUTS:
+  - en.body(text, font_name=None, font_size=None, text_color=None, leading=None)
+    Normal paragraph text. Inline LaTeX '$...$' inside text is auto-compiled on the fly.
+  - en.bullet(items_list)
+    Bullet point list.
+  - en.formula(latex_str, color=None, fontsize=None) -> str
+    Inline LaTeX compiler. Returns string with XML image tag.
+  - en.formula_block(latex_str, color=None, fontsize=None)
+    Centers LaTeX formula block.
+  - en.code_block(code_text, lang="python", theme=en.DRACULA)
+    Syntax-highlighted code block. Themes: DRACULA, MONOKAI, GITHUB_DARK.
+  - en.info_table(headers, rows, col_widths=None)
+    Styled data table. Col widths can be percentages (e.g. ["40%", "60%"]).
+  - en.image(path, caption="", width=None, height=None, link=None, fallbacks=[])
+    Image loader with automatic URL caching, fallback lists, and missing placeholders.
+  - en.warning(text), en.note(text), en.tip(text), en.important(text)
+    Semantic callout cards.
+  - en.definition(title, text), en.theorem(title, text), en.proof(text)
+    Academic callout blocks.
+  - en.frame_format(title, fields)
+    Renders protocol frame segments. fields is a list of (label, bytes_desc).
+  - en.packet_format(title, fields, bit_ruler=True)
+    Renders network packet structures. fields is list of (label, bit_width).
+  - en.revision_card(title, items)
+     Revision checklist card.
+
+ACTIVE RECALL & EXPORT:
+  - en.flashcard(question, answer)
+    Defines a flashcard study question. Gathered for Anki APKG compiler.
+  - en.question(text), en.answer(text), en.qbox(text)
+    Study questions layout.
+  - en.mcq(question, options, correct_index)
+    Multiple choice question layout.
+
+CROSS-REFERENCING:
+  - en.label(name)
+    Attaches a target reference label to the preceding heading.
+  - en.ref(name) -> str
+    Resolves the target reference label page number.
+
+DOCUMENT BUILD & EXPORT:
+  - en.build_doc(output_path, title=None, author=None)
+    Compiles everything into a PDF file.
+  - en.build_html(output_path)
+    Exports notes to HTML structure.
+  - en.build_pptx(output_path)
+    Exports notes to PowerPoint slides.
+  - en.build_split_doc(output_path, split_by="chapter")
+    Splits output PDF into multiple files by chapter boundaries or page ranges.
+
+--------------------------------------------------------------------------------
+2. PYTHON DIAGRAMS API REFERENCE (engrapha_diagrams)
+--------------------------------------------------------------------------------
+import engrapha_diagrams as ed
+
+To print standalone diagrams package reference guide, run:
+  engrapha-diagram (or engrapha-diagrams, engrapha_diagram, pdfdiagram)
+
+All diagram constructors accept:
+  width, height, theme=None, caption=None
+
+Available diagram classes:
+  - ed.Flowchart(width, height, theme=None, direction='TB', scale_factor=None)
+    * Methods:
+      .terminal(id, label)      - Oval terminal node
+      .process(id, label)       - Rectangular process node
+      .decision(id, label)      - Diamond decision node
+      .io_box(id, label)        - Parallelogram input/output node
+      .connector(id, label)     - Circle connector
+      .predefined(id, label)    - Predefined process box node
+      .edge(src, dst, label="", orthogonal=False, branch=None) - Link edge
+    * Example:
+      fc = ed.Flowchart(width=300, height=150, direction="LR")
+      fc.terminal("start", "START").process("calc", "Calc").terminal("end", "END")
+      fc.edge("start", "calc").edge("calc", "end")
+
+  - ed.SequenceDiagram(width, height, theme=None)
+    * Methods:
+      .actor(id, label)         - Lifeline actor (person)
+      .participant(id, label)   - Lifeline participant (box)
+      .activate(id)             - Start activation bar
+      .deactivate(id)           - End activation bar
+      .message(src, dst, text, arrow='solid') - Message arrow ('solid', 'dashed', etc.)
+      .divider(text)            - Horizontal partition divider
+    * Example:
+      seq = ed.SequenceDiagram(width=400, height=220)
+      seq.actor("c", "Client").actor("s", "Server")
+      seq.activate("c").message("c", "s", "Request").activate("s")
+      seq.message("s", "c", "Response", arrow="dashed").deactivate("s")
+
+  - ed.LayeredStack(width, height, theme=None)
+    * Methods:
+      .layer(label, sublabel="") - Add a stack layer
+      .divider()                 - Insert thick border line
+    * Example:
+      stack = ed.LayeredStack(width=300, height=150)
+      stack.layer("Application", "HTTP").layer("Transport", "TCP")
+
+  - ed.NetworkDiagram(width, height, theme=None)
+    * Methods:
+      .node(id, label, x, y, kind='host') - kinds: host, server, cloud, switch, database, router, firewall
+      .link(id1, id2, label="")
+    * Example:
+      net = ed.NetworkDiagram(width=400, height=200)
+      net.node("client", "PC", 50, 100).node("srv", "Server", 250, 100)
+      net.link("client", "srv")
+
+  - ed.ClassDiagram(width, height, theme=None, class_w=120)
+    * Methods:
+      .uml_class(id, name, stereotype="", attributes=[], methods=[])
+      .relate(src, dst, kind='association', label="") - kinds: inheritance, realization, composition, aggregation, association, dependency
+    * Example:
+      cd = ed.ClassDiagram(width=300, height=200)
+      cd.uml_class("Shape", "Shape", stereotype="abstract")
+      cd.uml_class("Circle", "Circle", attributes=["- r: double"])
+      cd.relate("Circle", "Shape", kind="inheritance")
+
+  - ed.ERDiagram(width, height, theme=None)
+    * Methods:
+      .entity(id)
+      .relationship(id)
+      .entity_attributes(entity_id, attribute_list) - attribute_list elements: "Name" or ("ID", {"pk": True})
+      .connect(node1, node2, card_from=None, card_to=None)
+    * Example:
+      er = ed.ERDiagram(width=400, height=180)
+      er.entity("User").relationship("Owns").entity("Device")
+      er.entity_attributes("User", [("ID", {"pk": True}), "Email"])
+      er.connect("User", "Owns", card_from="1", card_to="N")
+
+  - ed.StateMachine(width, height, theme=None)
+    * Methods:
+      .state(id, label, x, y, initial=False, accepting=False)
+      .transition(src, dst, label="")
+    * Example:
+      sm = ed.StateMachine(width=300, height=150)
+      sm.state("s0", "Init", 50, 75, initial=True).state("s1", "Done", 250, 75, accepting=True)
+      sm.transition("s0", "s1", "process")
+
+  - ed.TimingDiagram(width, height, theme=None)
+    * Methods:
+      .clock(label, period, cycles)
+      .signal(label, transitions) - transitions: list of (time, state_0_or_1)
+    * Example:
+      td = ed.TimingDiagram(width=400, height=120)
+      td.clock("CLK", 20.0, 5).signal("RESET", [(0, 1), (15, 0)])
+
+  - ed.SchemaDiagram(width, height, theme=None)
+    * Methods:
+      .table(name, columns, x=0, y=0) - columns: list of (col_name, col_type, {"pk": True/False, "fk": True/False})
+      .relation(table1, col1, table2, col2)
+    * Example:
+      schema = ed.SchemaDiagram(width=400, height=200)
+      schema.table("users", [("id", "INT", {"pk": True}), ("name", "VARCHAR", {})])
+
+  - ed.ArchitectureDiagram(width, height, theme=None, orientation='horizontal')
+    * Methods:
+      .client(id, label), .service(id, label), .database(id, label), .queue(id, label)
+      .connect(src, dst, label="")
+    * Example:
+      arch = ed.ArchitectureDiagram(width=400, height=200)
+      arch.client("client", "Browser").service("api", "API Gateway")
+      arch.connect("client", "api", "HTTPS")
+
+  - ed.C4ContainerDiagram(width, height, theme=None)
+    * Methods:
+      .system(id, label, desc="")
+      .container(id, label, technology, desc="")
+      .relate(src, dst, label="")
+    * Example:
+      c4 = ed.C4ContainerDiagram(width=400, height=180)
+      c4.system("user", "User").container("spa", "SPA", "React")
+      c4.relate("user", "spa", "Uses")
+
+  - ed.GitDiagram(width, height, theme=None)
+    * Methods:
+      .commit(branch, label)
+      .branch(parent, child)
+      .merge(from_branch, to_branch, label)
+    * Example:
+      git = ed.GitDiagram(width=300, height=120)
+      git.commit("main", "Init").branch("main", "dev").commit("dev", "Feature")
+
+  - ed.AWSDiagram(width, height, theme=None, orientation='horizontal')
+    * Methods:
+      .ec2(id, label), .rds(id, label), .s3(id, label), .lambda_fn(id, label), .sqs(id, label)
+      .connect(src, dst, label="")
+    * Example:
+      aws = ed.AWSDiagram(width=400, height=200)
+      aws.ec2("web", "Instance").rds("db", "RDS")
+      aws.connect("web", "db", "SQL Connection")
+
+To save standalone images:
+  diagram.save("output.svg") # Supports SVG, PDF, PNG, JPG formats.
+
+To embed inside engrapha_notes:
+  # Calling .as_flowable() returns a list[Flowable] containing the drawing
+  # and caption. This is fully accepted by en.add().
+  en.add(diagram.as_flowable())
+
+--------------------------------------------------------------------------------
+3. CLI USAGE & COMPILER
+--------------------------------------------------------------------------------
+Compile a Markdown file into a themed PDF notes document:
+  engrapha <input_file.md> [-o <output_file.pdf>] [-t <theme_name>]
+
+Options:
+  -o, --output    Path to the output PDF (defaults to <input_name>.pdf).
+  -t, --theme     Theme name: dark (default), light, ocean-dark, forest-dark,
+                  sunset-dark, midnight-dark, ocean-light, sepia,
+                  catppuccin-latte, catppuccin-mocha.
+  --title         Metadata title.
+  --author        Metadata author.
+  --info          Display this detailed guide.
+
+Markdown Syntax Supported:
+  - Metadata Front-Matter:
+    ---
+    title: Note Title
+    author: Author Name
+    theme: midnight-dark
+    ---
+  - Headings:
+    # Part Title -> Creates a Part Separator Box
+    ## Chapter Title -> Creates a Chapter Title Box
+    ### Section Title -> Creates a Section Title
+    #### Subsection Title -> Creates a Subsection Title
+  - Standard markdown paragraphs, **bold**, *italics*, `inline code`.
+  - LaTeX Math: Inline LaTeX '$...$' is automatically compiled into inline vector math.
+    (Note: Uses matplotlib's mathtext parser; use \\geq/\\leq instead of \\ge/\\le,
+    \\Leftrightarrow instead of \\iff, \\ (\\mathrm{mod}\\ N) instead of \\pmod,
+    and \\overset{label}{\\rightarrow} instead of \\xrightarrow).
+  - Lists: Bullet lines starting with '-', '*' or '+' map to bullet lists.
+  - Tables: Standard markdown tables map to styled Info Tables.
+  - Alerts (GFM Alert blocks):
+    > [!NOTE] Note text... (creates a Note callout box)
+    > [!TIP] Tip text... (creates a Tip callout box)
+    > [!WARNING] Warning text... (creates a Warning highlight box)
+    > [!CAUTION] Caution text... (creates a Caution highlight box)
+
+--------------------------------------------------------------------------------
+4. MARKDOWN DIAGRAM DSL CODE BLOCKS
+--------------------------------------------------------------------------------
+You can embed vector diagrams directly in your markdown using fenced code blocks.
+Supported block types: flowchart, sequence, layeredstack, schema, er, git,
+architecture, c4, aws.
+
+Valid configuration keys at the start of any block (no spaces around '='):
+  width=VAL         - Drawing width in points (default: 450)
+  height=VAL        - Drawing height in points (default: 240)
+  direction=DIR     - Flow direction: TB (Top-to-Bottom) or LR (Left-to-Right)
+  scale_factor=VAL  - Decimal scale factor (default: auto-computed)
+  caption="TEXT"    - Optional caption centered below diagram
+
+- **flowchart**:
+  * Syntax & Commands:
+    - terminal <id> "<label>"       - Oval shape node
+    - process <id> "<label>"        - Rectangular shape node
+    - decision <id> "<label>"       - Diamond shape node
+    - io <id> "<label>"             - Parallelogram input/output node
+    - connector <id> "<label>"      - Circle shape node
+    - predefined <id> "<label>"     - Predefined process box node
+    - edge <src> <dst> ["label"] [orthogonal=true] - Connects two nodes
+  * Example:
+    ```flowchart
+    width=400
+    height=180
+    direction=LR
+    terminal s "START"
+    process p "Compute Value"
+    terminal e "END"
+    edge s p
+    edge p e
+    ```
+
+- **sequence**:
+  * Syntax & Commands:
+    - actor <id> "<label>"          - Lifeline actor (person)
+    - participant <id> "<label>"    - Lifeline participant (box)
+    - message <src> <dst> "<text>" [arrow=solid/dashed/solid_open/dashed_open]
+    - divider ["label"]             - Horizontal divider line
+  * Example:
+    ```sequence
+    actor c "Client"
+    participant s "Server"
+    message c s "GET /index"
+    divider "Processing"
+    message s c "200 OK" arrow=dashed
+    ```
+
+- **layeredstack**:
+  * Syntax & Commands:
+    - layer "<label>" ["sublabel"]  - Add a layer
+    - divider                       - Thicker layer divider line
+  * Example:
+    ```layeredstack
+    layer "Application" "HTTP"
+    layer "Transport" "TCP"
+    divider
+    layer "Network" "IP"
+    ```
+
+- **schema**:
+  * Syntax & Commands:
+    - table <name> [x=coord] [y=coord] - Starts a database table definition
+    - <col_name>: <type> [(pk)] [(fk)] [-> target_table.col] - Field entry
+    - relation <table1>.<col1> <table2>.<col2> - FK link
+  * Example:
+    ```schema
+    table users x=50 y=100
+      id: INT (pk)
+      email: VARCHAR
+    table orders x=250 y=100
+      id: INT (pk)
+      user_id: INT (fk) -> users.id
+    ```
+
+- **git**:
+  * Syntax & Commands:
+    - commit <branch> "<message>"   - Create a commit node
+    - branch <parent> <child>       - Spawn child branch lane
+    - merge <from> <to> "<message>" - Merge two branch lanes
+  * Example:
+    ```git
+    commit main "Init"
+    branch main dev
+    commit dev "Feature"
+    merge dev main "Merge feature"
+    ```
+
+- **architecture**:
+  * Syntax & Commands:
+    - client <id> "<label>"         - Client component box
+    - service <id> "<label>"        - Service component box
+    - database <id> "<label>"       - Database component cylinder
+    - queue <id> "<label>"          - Message queue component box
+    - connect <src> <dst> "<label>" - Direct arrow connection
+  * Example:
+    ```architecture
+    client web "Web App"
+    service api "Backend"
+    database db "DB"
+    connect web api "HTTP"
+    connect api db "SQL"
+    ```
+
+- **aws**:
+  * Syntax & Commands:
+    - ec2 <id> "<label>"            - EC2 instance icon
+    - rds <id> "<label>"            - RDS database icon
+    - s3 <id> "<label>"             - S3 bucket icon
+    - lambda <id> "<label>"         - Lambda function icon
+    - sqs <id> "<label>"            - SQS queue icon
+    - connect <src> <dst> "<label>" - Connection arrow
+  * Example:
+    ```aws
+    ec2 web "Web App"
+    rds db "Database"
+    connect web db "SQL"
+    ```
+
+- **c4**:
+  * Syntax & Commands:
+    - system <id> "<label>" ["desc"]          - System Context block
+    - container <id> "<label>" "<tech>" ["desc"] - Container block
+    - relate <src> <dst> "<label>"            - Relationship arrow
+  * Example:
+    ```c4
+    system user "Customer"
+    container spa "SPA" "React" "Provides UI"
+    relate user spa "Uses"
+    ```
+================================================================================"""
+    print(guide)
+
+
 def main() -> None:
     """CLI entrypoint."""
     parser = argparse.ArgumentParser(
         description="Compile Markdown documents to themed ReportLab PDFs with native diagrams."
     )
-    parser.add_argument("input", help="Path to the input markdown file.")
+    parser.add_argument("input", nargs="?", help="Path to the input markdown file.")
     parser.add_argument(
         "-o",
         "--output",
@@ -857,8 +1295,21 @@ def main() -> None:
     )
     parser.add_argument("--title", help="Document title metadata.")
     parser.add_argument("--author", help="Document author metadata.")
+    parser.add_argument(
+        "--info",
+        action="store_true",
+        help="Print comprehensive package usage guide and API documentation.",
+    )
 
     args = parser.parse_args()
+
+    if args.info:
+        print_package_help()
+        sys.exit(0)
+
+    if not args.input:
+        parser.print_help()
+        sys.exit(1)
 
     try:
         compile_markdown_to_pdf(

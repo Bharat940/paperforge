@@ -177,10 +177,44 @@ class StateMachine(DiagramBase):
         rt = self._state_radius(ts)
 
         if tr.from_id == tr.to_id:
-            # Self-loop: arc above the state
+            # Self-loop: symmetric arc above the state circle
+            import math
+            theta1 = 2.0 * math.pi / 3.0  # 120 deg
+            theta2 = math.pi / 3.0        # 60 deg
+
+            sx = fs.x + rf * math.cos(theta1)
+            sy = fs.y + rf * math.sin(theta1)
+            ex = fs.x + rf * math.cos(theta2)
+            ey = fs.y + rf * math.sin(theta2)
+
+            offset_val = 18.0
+            c1x = sx - offset_val * 0.5
+            c1y = sy + offset_val * 1.5
+            c2x = ex + offset_val * 0.5
+            c2y = ey + offset_val * 1.5
+
+            p = Path()
+            p.moveTo(sx, sy)
+            p.curveTo(c1x, c1y, c2x, c2y, ex, ey)
+            p.fillColor = None
+            p.strokeColor = S._hex(t.transition_color)
+            p.strokeWidth = 1.3
+            self._add(p)
+
+            # Draw arrowhead at the end (ex, ey) pointing tangent to the curve
+            arrow_size = 6.0
             self._add(
-                S.self_loop_path(fs.x, fs.y, rf, color=t.transition_color, width=1.3)
+                S._arrowhead_polygon(
+                    ex,
+                    ey,
+                    -offset_val * 0.5,
+                    -offset_val * 1.5,
+                    arrow_size,
+                    True,
+                    t.transition_color,
+                )
             )
+
             font_size = 8.0
             lines = self._transition_label_lines(tr.label) if tr.label else [""]
             tw = max(
@@ -189,15 +223,16 @@ class StateMachine(DiagramBase):
             lh = font_size * 1.2
             th = font_size + (len(lines) - 1) * lh
 
-            lx = fs.x + rf + 18
-            ly = fs.y + rf + 8
+            # Center label directly above the self-loop
+            lx = fs.x
+            ly = fs.y + rf + offset_val * 1.5 + 4.0
 
             if tr.pill:
                 pad_x = 3.5
                 pad_y = 2.0
                 pill_w = tw + 2 * pad_x
                 pill_h = th + 2 * pad_y
-                rx, ry = self.get_non_overlapping_position(lx, ly, pill_w, pill_h)
+                rx, ry = self.get_non_overlapping_position(lx - pill_w / 2.0, ly, pill_w, pill_h)
                 pill_text_color = S.get_contrast_color(
                     t.surface, light_fg=t.transition_label_color, dark_fg="#0f172a"
                 )
@@ -216,7 +251,7 @@ class StateMachine(DiagramBase):
                     )
                 )
             else:
-                rx, ry = self.get_non_overlapping_position(lx, ly, tw + 4.0, th + 2.0)
+                rx, ry = self.get_non_overlapping_position(lx - tw / 2.0, ly, tw + 4.0, th + 2.0)
                 loop_text_color = S.get_contrast_color(
                     t.bg, light_fg=t.transition_label_color, dark_fg="#0f172a"
                 )
@@ -237,7 +272,7 @@ class StateMachine(DiagramBase):
                 else:
                     self._add(
                         S.label(
-                            rx,
+                            rx + tw / 2.0,
                             ry,
                             tr.label,
                             font=t.font_name_italic,
@@ -584,7 +619,7 @@ class StateMachine(DiagramBase):
             self.drawing.height = self.height
 
         state_ids = [s.id for s in self._states]
-        edges = [(t.from_id, t.to_id) for t in self._transitions]
+        edges = [(t.from_id, t.to_id) for t in self._transitions if t.from_id != t.to_id]
         coords = auto_layout_graph(
             state_ids, edges, self.width, self.height, direction=direction
         )
@@ -595,6 +630,58 @@ class StateMachine(DiagramBase):
                     s.x = x
                 if s.y is None:
                     s.y = y
+
+        # Compute ranks to detect linear layout
+        adj: dict[str, list[str]] = {nid: [] for nid in state_ids}
+        for u, v in edges:
+            if u in adj and v in adj:
+                adj[u].append(v)
+        visited = {nid: 0 for nid in state_ids}
+        back_edges = set()
+        def dfs(u: str) -> None:
+            visited[u] = 1
+            for v in adj[u]:
+                if visited[v] == 1:
+                    back_edges.add((u, v))
+                elif visited[v] == 0:
+                    dfs(v)
+            visited[u] = 2
+        for nid in state_ids:
+            if visited[nid] == 0:
+                dfs(nid)
+        dag_adj: dict[str, list[str]] = {nid: [] for nid in state_ids}
+        for u in state_ids:
+            for v in adj[u]:
+                if (u, v) in back_edges:
+                    dag_adj[v].append(u)
+                else:
+                    dag_adj[u].append(v)
+        ranks = {nid: 0 for nid in state_ids}
+        for _ in range(len(state_ids)):
+            changed = False
+            for u in state_ids:
+                for v in dag_adj[u]:
+                    if ranks[v] <= ranks[u]:
+                        ranks[v] = ranks[u] + 1
+                        changed = True
+            if not changed:
+                break
+
+        # Check if every rank has at most one real state
+        rank_counts: dict[int, int] = {}
+        for nid, r in ranks.items():
+            rank_counts[r] = rank_counts.get(r, 0) + 1
+        is_linear = all(count <= 1 for count in rank_counts.values())
+
+        if is_linear:
+            if direction == "LR":
+                center_y = self.height / 2.0
+                for s in self._states:
+                    s.y = center_y
+            elif direction == "TB":
+                center_x = self.width / 2.0
+                for s in self._states:
+                    s.x = center_x
 
         self._normalize_bounds()
 
@@ -617,7 +704,7 @@ class StateMachine(DiagramBase):
                 for r in self._transitions
             )
             if has_reverse and tr.offset == 0.0:
-                tr.offset = 35.0
+                tr.offset = 22.0
 
             # 2. Crossing check
             if tr.offset == 0.0:
@@ -639,7 +726,7 @@ class StateMachine(DiagramBase):
                                 crossed = True
                                 max_r = max(max_r, self._state_radius(s))
                 if crossed:
-                    desired_offset = max_r + 65.0
+                    desired_offset = max_r + 26.0
                     if is_tb:
                         dy = ts.y - fs.y
                         uy = dy / (math.hypot(ts.x - fs.x, dy) or 1.0)
@@ -709,10 +796,10 @@ class StateMachine(DiagramBase):
                     )
                     if collides:
                         if tr1.offset == 0.0:
-                            tr1.offset = -40.0
+                            tr1.offset = -30.0
                         else:
                             sign = 1.0 if tr1.offset >= 0.0 else -1.0
-                            tr1.offset += sign * 15.0
+                            tr1.offset += sign * 6.0
                         adjusted = True
 
                 # 2. Check collision with other transitions
@@ -728,10 +815,10 @@ class StateMachine(DiagramBase):
                         if boxes_overlap(g1["label_box"], g2["label_box"], padding=4.0):
                             if abs(tr1.offset) >= abs(tr2.offset):
                                 sign = 1.0 if tr1.offset >= 0.0 else -1.0
-                                tr1.offset += sign * 15.0
+                                tr1.offset += sign * 6.0
                             else:
                                 sign = 1.0 if tr2.offset >= 0.0 else -1.0
-                                tr2.offset += sign * 15.0
+                                tr2.offset += sign * 6.0
                             adjusted = True
 
                     # Check curve1 vs label2
@@ -742,10 +829,10 @@ class StateMachine(DiagramBase):
                         ):
                             if abs(tr1.offset) >= abs(tr2.offset):
                                 sign = 1.0 if tr1.offset >= 0.0 else -1.0
-                                tr1.offset += sign * 15.0
+                                tr1.offset += sign * 6.0
                             else:
                                 sign = 1.0 if tr2.offset >= 0.0 else -1.0
-                                tr2.offset += sign * 15.0
+                                tr2.offset += sign * 6.0
                             adjusted = True
 
                     # Check curve2 vs label1
@@ -756,10 +843,10 @@ class StateMachine(DiagramBase):
                         ):
                             if abs(tr2.offset) >= abs(tr1.offset):
                                 sign = 1.0 if tr2.offset >= 0.0 else -1.0
-                                tr2.offset += sign * 15.0
+                                tr2.offset += sign * 6.0
                             else:
                                 sign = 1.0 if tr1.offset >= 0.0 else -1.0
-                                tr1.offset += sign * 15.0
+                                tr1.offset += sign * 6.0
                             adjusted = True
 
                     # Check curve1 vs curve2 collision (if not same endpoints)
@@ -772,10 +859,10 @@ class StateMachine(DiagramBase):
                         if close_count > 0:
                             if abs(tr1.offset) >= abs(tr2.offset):
                                 sign = 1.0 if tr1.offset >= 0.0 else -1.0
-                                tr1.offset += sign * 15.0
+                                tr1.offset += sign * 6.0
                             else:
                                 sign = 1.0 if tr2.offset >= 0.0 else -1.0
-                                tr2.offset += sign * 15.0
+                                tr2.offset += sign * 6.0
                             adjusted = True
 
             if not adjusted:
@@ -868,7 +955,7 @@ class StateMachine(DiagramBase):
     def build(self) -> None:
         # 1. Compute ranks to determine layer assignments for auto-switching layout orientation
         state_ids = [s.id for s in self._states]
-        edges = [(t.from_id, t.to_id) for t in self._transitions]
+        edges = [(t.from_id, t.to_id) for t in self._transitions if t.from_id != t.to_id]
         adj: dict[str, list[str]] = {nid: [] for nid in state_ids}
         for u, v in edges:
             if u in adj and v in adj:

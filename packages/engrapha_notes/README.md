@@ -282,6 +282,14 @@ en.formula(r"E = mc^2", color="#fbbf24", fontsize=14.0)
 en.formula_block(r"\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}", color="#38bdf8")
 ```
 
+#### Matplotlib Mathtext Limitations
+Since inline math uses matplotlib's internal mathtext parser (rather than a full-scale LaTeX compiler), there are a few syntax constraints:
+* **No short-form inequality macros**: Use `\geq` and `\leq` instead of `\ge` and `\le`.
+* **No `\iff` and extensible arrows**: Use `\Leftrightarrow` instead of `\iff`, and use `\overset{label}{\rightarrow}` instead of extensible arrows like `\xrightarrow{label}`.
+* **No `\pmod`**: Use `\ (\mathrm{mod}\ N)` instead of `\pmod{N}` or `\pmod N`.
+* **Set vertical bars**: Use `\vert` or `\mid` for vertical bars in sets.
+
+
 ### 6. Advanced Styling, Custom Layouts & Overrides
 
 ```python
@@ -409,10 +417,18 @@ en.packet_format(
 
 ## 💻 Markdown CLI Compiler
 
-You can compile markdown notes files directly to PDF via the command line interface using either `Engrapha` or `pdfnotes`:
+You can compile markdown notes files directly to PDF via the command line interface using either `engrapha` or `pdfnotes`:
 
 ```bash
-Engrapha input.md --output output.pdf --theme catppuccin-mocha
+engrapha input.md --output output.pdf --theme catppuccin-mocha
+```
+
+### Display Help & Documentation
+To print the comprehensive API reference, theme listing, and Markdown syntax guide directly in your terminal, run:
+
+```bash
+engrapha --info
+# or: pdfnotes --info
 ```
 
 ### Options:

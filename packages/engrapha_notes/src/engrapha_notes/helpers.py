@@ -15,7 +15,7 @@ from typing import Any, TYPE_CHECKING, Literal
 if TYPE_CHECKING:
     from reportlab.pdfgen.canvas import Canvas
 
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import (
     Flowable,
@@ -645,6 +645,7 @@ def cover_card(
     banner_align: str = "left",
     logo_svg: str | None = None,
     logo_width: float = 120.0,
+    **extra: Any,
 ) -> None:
     """
     Add a styled cover-title card to the story.
@@ -657,10 +658,28 @@ def cover_card(
     tags_max_w: float = float(w_val) if isinstance(w_val, (int, float)) else float(CW)
     effective_style = cover_theme if cover_theme is not None else style
 
+    def _load_image_flowable(img_path: str, target_width: float) -> Any:
+        is_svg = img_path.lower().endswith(".svg")
+        if is_svg:
+            return InlineSVG(img_path, target_width=target_width)
+        else:
+            from reportlab.lib.utils import ImageReader
+            from reportlab.platypus import Image as RLImage
+            try:
+                reader = ImageReader(img_path)
+                iw, ih = reader.getSize()
+                aspect = ih / iw if iw > 0 else 1.0
+                target_height = target_width * aspect
+                return RLImage(img_path, width=target_width, height=target_height)
+            except Exception:
+                from reportlab.platypus import Spacer
+                return Spacer(1, 0)
+
     add(CoverBackgroundFlowable(effective_style, t_theme, bg_svg=bg_svg))
 
     if logo_svg:
-        add(InlineSVG(logo_svg, target_width=logo_width))
+        logo_flowable = _load_image_flowable(logo_svg, target_width=logo_width)
+        add(logo_flowable)
         sp(16)
 
     on_dark_color = t_theme.rl(_contrast_text_color(t_theme))
@@ -788,7 +807,7 @@ def cover_card(
 
     if arch == "hero":
         # Massive typography, huge whitespace, left aligned
-        sp(80)
+        sp(30 if logo_svg else 80)
         if icon:
             add(render_icon(icon, size=56.0))
             sp(24)
@@ -819,7 +838,7 @@ def cover_card(
 
     elif arch == "book":
         # Classic structured textbook aesthetic
-        sp(120)
+        sp(40 if logo_svg else 120)
         st_title = ParagraphStyle(
             _uid(),
             parent=s.COVER_H1,
@@ -854,7 +873,7 @@ def cover_card(
 
     elif arch in ("academic_modern", "diagram"):
         # Clean university layout (diagram uses same text layout but relies on SVG background)
-        sp(60)
+        sp(20 if logo_svg else 60)
         if icon:
             add(render_icon(icon, size=48.0))
             sp(20)
@@ -889,10 +908,10 @@ def cover_card(
         sp(24)
         from reportlab.platypus import Table, TableStyle, Indenter
 
-        svg_flowable = InlineSVG(banner_svg, target_width=banner_width)
+        banner_flowable = _load_image_flowable(banner_svg, target_width=banner_width)
 
         if banner_align == "center":
-            center_table = Table([[svg_flowable]], colWidths=["100%"])
+            center_table = Table([[banner_flowable]], colWidths=["100%"])
             center_table.setStyle(
                 TableStyle(
                     [
@@ -908,11 +927,12 @@ def cover_card(
         else:
             if base_indent > 0:
                 add(Indenter(left=base_indent))
-            add(svg_flowable)
+            add(banner_flowable)
             if base_indent > 0:
                 add(Indenter(left=-base_indent))
 
-        consumed += (banner_width * (640.0 / 1280.0)) + 24.0
+        banner_h = getattr(banner_flowable, "height", 0) or (banner_width * (640.0 / 1280.0))
+        consumed += banner_h + 24.0
 
     flexible_spacer(consumed)
 
@@ -1253,6 +1273,7 @@ def cover_preset(preset_name: str, **kwargs: Any) -> None:
         tags=tags,
         icon=icon,
         cover_theme=cover_theme,
+        **merged,
     )
 
 
@@ -1462,7 +1483,7 @@ def body(
         fontName=f_name,
         leading=lead,
         spaceAfter=5,
-        alignment=TA_JUSTIFY,
+        alignment=TA_LEFT,
     )
     add(Paragraph(text, st))
 
@@ -1481,7 +1502,7 @@ def definition(text: str, bg: Any = None, border: Any = None) -> None:
         leading=f_size * 1.6,
         spaceBefore=4,
         spaceAfter=6,
-        alignment=TA_JUSTIFY,
+        alignment=TA_LEFT,
     )
 
     if getattr(t_theme, "plain_questions", False):
@@ -1865,7 +1886,7 @@ def proof(text: str) -> None:
         leftIndent=20,
         spaceBefore=6,
         spaceAfter=6,
-        alignment=TA_JUSTIFY,
+        alignment=TA_LEFT,
     )
     p = Paragraph(f"<i>Proof.</i> {text} [Q.E.D.]", st)
     add(p)

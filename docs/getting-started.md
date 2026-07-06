@@ -136,6 +136,9 @@ en.formula(r"E = mc^2", color="#fbbf24", fontsize=14.0)
 en.formula_block(r"\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}", color="#38bdf8")
 ```
 
+> [!NOTE]
+> **Matplotlib Mathtext Limitations**: Inline math uses matplotlib's internal mathtext engine rather than a full LaTeX compiler. Therefore, you must use full macros like `\geq` and `\leq` instead of `\ge` and `\le`, `\Leftrightarrow` instead of `\iff`, `\ (\mathrm{mod}\ N)` instead of `\pmod{N}`, and `\overset{label}{\rightarrow}` instead of extensible arrows like `\xrightarrow{label}`.
+
 ## What to read next
 
 <div class="grid cards" markdown>

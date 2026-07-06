@@ -29,6 +29,14 @@ dev = [
     "mypy>=1.11.0",
 ]
 
+[project.scripts]
+engrapha-diagrams = "engrapha_diagrams.cli:main"
+engrapha-diagram = "engrapha_diagrams.cli:main"
+engrapha_diagrams = "engrapha_diagrams.cli:main"
+engrapha_diagram = "engrapha_diagrams.cli:main"
+pdfdiagrams = "engrapha_diagrams.cli:main"
+pdfdiagram = "engrapha_diagrams.cli:main"
+
 [tool.setuptools]
 
 [tool.setuptools.packages.find]

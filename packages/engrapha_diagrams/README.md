@@ -387,6 +387,31 @@ This happens because `.as_flowable()` returns a `list[Flowable]` (which packages
 
 ---
 
+## 💻 Command Line Interface (CLI)
+
+The package exposes a command-line script alias to show a comprehensive API guide and Markdown DSL reference:
+
+```bash
+engrapha-diagrams
+# or: engrapha-diagram, engrapha_diagrams, engrapha_diagram, pdfdiagrams, pdfdiagram
+```
+
+Run it to display:
+1. Complete Python constructors and methods for all 13 diagram types.
+2. Standalone export guidelines.
+3. Matching diagram settings and themes.
+4. Full syntax reference for the diagram DSL (used when embedding drawings in `engrapha-notes` Markdown compiler documents).
+
+> [!IMPORTANT]
+> **Compilation requires `engrapha`**: The diagram CLI (`engrapha-diagrams`) is for reference only. To actually compile a Markdown document containing these diagram blocks, you must install the `engrapha-notes` package and use the main `engrapha` compiler CLI:
+> 
+> ```bash
+> pip install engrapha-notes[all]
+> engrapha input.md --output output.pdf
+> ```
+
+---
+
 ## 📋 Requirements & License
 
 * **Python** >= 3.11

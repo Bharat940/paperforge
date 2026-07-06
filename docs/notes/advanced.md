@@ -57,6 +57,13 @@ en.formula_block(r"\int_a^b f(x)\, dx = F(b) - F(a)")
 
 These use matplotlib's mathtext engine (no LaTeX installation required).
 
+### Matplotlib Mathtext Limitations
+Since inline math uses matplotlib's internal mathtext parser (rather than a full-scale LaTeX compiler), there are a few syntax constraints:
+* **No short-form inequality macros**: Use `\geq` and `\leq` instead of `\ge` and `\le`.
+* **No `\iff` and extensible arrows**: Use `\Leftrightarrow` instead of `\iff`, and use `\overset{label}{\rightarrow}` instead of extensible arrows like `\xrightarrow{label}`.
+* **No `\pmod`**: Use `\ (\mathrm{mod}\ N)` instead of `\pmod{N}` or `\pmod N`.
+* **Set vertical bars**: Use `\vert` or `\mid` for vertical bars in sets.
+
 ## References and index
 
 ```python

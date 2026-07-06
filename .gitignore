@@ -26,6 +26,7 @@ site/
 /demo_*.pdf
 /demo_*.apkg
 /quickstart.pdf
+study_notes/*.pdf
 
 # Generated artifacts
 *.csv

@@ -1,11 +1,16 @@
 # Markdown Compiler
 
-Engrapha ships with a CLI tool that compiles standard Markdown files into themed PDFs. Two commands, `Engrapha` and `pdfnotes`, are installed by the `Engrapha-notes` package.
+Engrapha ships with a CLI tool that compiles standard Markdown files into themed PDFs. Two commands, `engrapha` and `pdfnotes`, are installed by the `engrapha-notes` package.
+
+To view the complete CLI compiler guide and help page, run:
+```bash
+engrapha --info
+```
 
 ## Quick Start
 
 ```bash
-Engrapha notes.md --output notes.pdf --theme catppuccin-mocha
+engrapha notes.md --output notes.pdf --theme catppuccin-mocha
 ```
 
 Other supported themes: `dark`, `light`, `ocean-dark`, `forest-dark`, `sunset-dark`, `midnight-dark`, `ocean-light`, `sepia`, `catppuccin-latte`, `catppuccin-mocha`.
@@ -15,7 +20,7 @@ Other supported themes: `dark`, `light`, `ocean-dark`, `forest-dark`, `sunset-da
 ### Basic usage
 
 ```bash
-Engrapha input.md -o output.pdf -t catppuccin-mocha --title "My Notes" --author "Your Name"
+engrapha input.md -o output.pdf -t catppuccin-mocha --title "My Notes" --author "Your Name"
 ```
 
 ### Flags
