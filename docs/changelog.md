@@ -8,6 +8,21 @@ All notable changes to Engrapha are documented here. Engrapha follows [Semantic 
 
 - Documentation website (mkdocs + Material)
 
+## [0.1.1] - 2026-07-06
+
+### Added
+- **Cover Page Raster Image Support:** Added native support for PNG, JPG, and JPEG files on cover page logo and banner elements. Dimensions are automatically inspected using `ImageReader` to calculate scale heights proportionally, preserving image aspect ratio.
+- **Balanced Cover Page Spacing:** Implemented dynamic top-margin scaling on the cover page when a logo is active to prevent the main title from being pushed too far down, maintaining a balanced, professional first-page layout.
+- **State Machine Rendering Aesthetics:** Improved state transition diagram layouts by introducing symmetric self-loop arcs with solid arrowheads, centered labels, and automatic centerline alignment for sequential state chains. Bidirectional and skipped-node transition arcs have been made sleeker and more balanced.
+
+### Fixed
+- **Preset Property Forwarding:** Fixed a configuration forwarding issue in `cover_preset` to ensure custom banner, logo, and alignment configurations are correctly passed to `cover_card` instead of being dropped. Added `**extra` to `cover_card` to absorb and ignore legacy layout parameters (such as `meta`) passed by preset templates.
+- **Layout and Typography Enhancements:** Resolved ReportLab's layout spacing gaps around inline equations and code fragments by updating the default paragraph alignment for body, definition, and proof blocks to left-alignment (`TA_LEFT`).
+- **State Machine Overlaps:** Excluded self-loops from rank dependency layout calculations to ensure correct horizontal positioning, keeping start-state marker arrows cleanly separated from self-loops.
+
+### Documentation
+- **Command Line Interface Reference:** Expanded docstrings and readmes across all package packages to detail available CLI aliases (e.g. `engrapha`, `engrapha-diagrams`) and CLI flags (e.g. `--info`).
+
 ## [0.1.0] - 2026
 
 Initial public release of Engrapha. Both packages contain feature-complete implementations:
