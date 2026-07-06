@@ -4,13 +4,10 @@ All notable changes to Engrapha are documented here. Engrapha follows [Semantic 
 
 ## [Unreleased]
 
-### In progress
-
-- Documentation website (mkdocs + Material)
-
 ## [0.1.1] - 2026-07-06
 
 ### Added
+- **Documentation Website:** Completed and deployed the official MkDocs documentation site using the Material theme.
 - **Cover Page Raster Image Support:** Added native support for PNG, JPG, and JPEG files on cover page logo and banner elements. Dimensions are automatically inspected using `ImageReader` to calculate scale heights proportionally, preserving image aspect ratio.
 - **Balanced Cover Page Spacing:** Implemented dynamic top-margin scaling on the cover page when a logo is active to prevent the main title from being pushed too far down, maintaining a balanced, professional first-page layout.
 - **State Machine Rendering Aesthetics:** Improved state transition diagram layouts by introducing symmetric self-loop arcs with solid arrowheads, centered labels, and automatic centerline alignment for sequential state chains. Bidirectional and skipped-node transition arcs have been made sleeker and more balanced.
