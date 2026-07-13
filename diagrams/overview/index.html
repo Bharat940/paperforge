@@ -2671,6 +2671,11 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># ... add nodes / edges / messages ...</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">en</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">diagram</span><span class="o">.</span><span class="n">as_flowable</span><span class="p">())</span>
 </span></code></pre></div>
+<p><code>en.add()</code> accepts either a single <code>Flowable</code> or a <code>list[Flowable]</code> — both work. It is the <strong>recommended</strong> way to embed diagrams.</p>
+<blockquote>
+<p>[!NOTE]
+<code>as_flowable()</code> returns a list of flowables. You may also see <code>en.story.extend(diagram.as_flowable())</code> in older examples \u2014 this works but bypasses the <code>add()</code> wrapper and can break if <code>set_story()</code> has not been called. Prefer <code>en.add()</code>.</p>
+</blockquote>
 <p>For side-by-side rendering in a table, use the raw drawing:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">engrapha_diagrams</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResponsiveDrawingFlowable</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">en</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Table</span><span class="p">([[</span><span class="n">ResponsiveDrawingFlowable</span><span class="p">(</span><span class="n">diagram</span><span class="o">.</span><span class="n">drawing</span><span class="p">)]]))</span>

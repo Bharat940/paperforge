@@ -960,6 +960,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#optional-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional dependencies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pdf" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2338,6 +2349,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#optional-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Optional dependencies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pdf" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2484,6 +2506,53 @@
 
 <h1 id="notes-export-formats">Notes: Export Formats<a class="headerlink" href="#notes-export-formats" title="Permanent link">&para;</a></h1>
 <p>Once your story is assembled, Engrapha can emit PDF, HTML, PPTX, and Anki packages.</p>
+<h2 id="optional-dependencies">Optional dependencies<a class="headerlink" href="#optional-dependencies" title="Permanent link">&para;</a></h2>
+<p>Some formats require extra packages. Install them upfront to avoid runtime errors:</p>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Extra needed</th>
+<th>Install command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PDF</td>
+<td><em>(none)</em></td>
+<td><code>pip install engrapha_notes</code></td>
+</tr>
+<tr>
+<td>HTML</td>
+<td><em>(none)</em></td>
+<td><code>pip install engrapha_notes</code></td>
+</tr>
+<tr>
+<td>PPTX</td>
+<td><code>python-pptx</code></td>
+<td><code>pip install "engrapha_notes[pptx]"</code></td>
+</tr>
+<tr>
+<td>Anki <code>.apkg</code></td>
+<td><code>genanki</code></td>
+<td><code>pip install "engrapha_notes[flashcards]"</code></td>
+</tr>
+<tr>
+<td>PDF splitting</td>
+<td><code>pymupdf</code></td>
+<td><code>pip install "engrapha_notes[split]"</code></td>
+</tr>
+<tr>
+<td>All extras</td>
+<td>—</td>
+<td><code>pip install "engrapha_notes[all]"</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>[!NOTE]
+If an optional dependency is missing, Engrapha raises a <code>RuntimeError</code> with the exact install command rather than silently failing.</p>
+</blockquote>
 <h2 id="pdf">PDF<a class="headerlink" href="#pdf" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">en</span><span class="o">.</span><span class="n">build_doc</span><span class="p">(</span><span class="s2">&quot;output.pdf&quot;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Algorithms Notes&quot;</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Bharat Dangi&quot;</span><span class="p">)</span>
 </span></code></pre></div>

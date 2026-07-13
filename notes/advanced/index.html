@@ -2547,6 +2547,10 @@
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Manual bookmarks (rarely needed — most sections auto-register)</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">en</span><span class="o">.</span><span class="n">bookmark</span><span class="p">(</span><span class="s2">&quot;Appendix&quot;</span><span class="p">)</span>
 </span></code></pre></div>
+<blockquote>
+<p>[!WARNING]
+<code>toc()</code> <strong>automatically appends a page break</strong> at the end. Do <strong>not</strong> call <code>en.br()</code> after <code>en.toc()</code> — it will produce a blank page.</p>
+</blockquote>
 <p>TOC styles:</p>
 <table>
 <thead>
@@ -2629,11 +2633,36 @@
 <h2 id="modular-compilation">Modular compilation<a class="headerlink" href="#modular-compilation" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">en</span><span class="o">.</span><span class="n">include_chapter</span><span class="p">(</span><span class="s2">&quot;chapter_01.py&quot;</span><span class="p">)</span>       <span class="c1"># Run and merge a Python script</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">en</span><span class="o">.</span><span class="n">include_markdown</span><span class="p">(</span><span class="s2">&quot;chapter_02.md&quot;</span><span class="p">)</span>      <span class="c1"># Parse and merge Markdown</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">en</span><span class="o">.</span><span class="n">build_split_doc</span><span class="p">(</span>                       <span class="c1"># Split into chapter PDFs</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="s2">&quot;output_prefix_&quot;</span><span class="p">,</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">split_by</span><span class="o">=</span><span class="s2">&quot;chapter&quot;</span><span class="p">,</span>                   <span class="c1"># &#39;chapter&#39; or integer</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">)</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Split by part boundaries (part_box() dividers)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">en</span><span class="o">.</span><span class="n">build_split_doc</span><span class="p">(</span><span class="s2">&quot;output_prefix_&quot;</span><span class="p">,</span> <span class="n">split_by</span><span class="o">=</span><span class="s2">&quot;part&quot;</span><span class="p">)</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Split by chapter boundaries (chap_box() and part_box() dividers)</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="n">en</span><span class="o">.</span><span class="n">build_split_doc</span><span class="p">(</span><span class="s2">&quot;output_prefix_&quot;</span><span class="p">,</span> <span class="n">split_by</span><span class="o">=</span><span class="s2">&quot;chapter&quot;</span><span class="p">)</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># Split by fixed page interval (requires pymupdf: pip install engrapha-notes[split])</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="n">en</span><span class="o">.</span><span class="n">build_split_doc</span><span class="p">(</span><span class="s2">&quot;output_prefix_&quot;</span><span class="p">,</span> <span class="n">page_interval</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </span></code></pre></div>
+<p><code>split_by</code> values:</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Splits at</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"part"</code></td>
+<td>Every <code>part_box()</code></td>
+</tr>
+<tr>
+<td><code>"chapter"</code></td>
+<td>Every <code>chap_box()</code> and <code>part_box()</code></td>
+</tr>
+</tbody>
+</table>
+<p>Passing <code>page_interval=N</code> (integer) splits the compiled PDF every N pages using PyMuPDF. Install with <code>pip install engrapha-notes[split]</code>.</p>
 <h2 id="page-numbering-resets">Page numbering resets<a class="headerlink" href="#page-numbering-resets" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">en</span><span class="o">.</span><span class="n">page_numbering</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;arabic&quot;</span><span class="p">)</span>
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>

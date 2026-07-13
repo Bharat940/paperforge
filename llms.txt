@@ -77,3 +77,10 @@ Engrapha is a Python toolkit that combines themed ReportLab notes template compi
 ---
 
 For a visual layout overview, see [sitemap.md](sitemap.md).
+
+## CLI Utilities & Discovery APIs
+
+* **`engrapha init [directory]`**: Bootstrap starter note projects.
+* **`engrapha --examples [filename] [--save]`**: Fetch reference examples and templates from GitHub raw CDN on-demand.
+* **`engrapha --doctor`**: Run system diagnostic and check required/optional dependencies.
+* **`en.available_themes()`**, **`en.available_presets()`**, **`en.available_cover_styles()`**: Inspect configurations programmatically.

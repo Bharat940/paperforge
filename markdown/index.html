@@ -2159,6 +2159,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#subcommands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subcommands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#front-matter-yaml" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2467,6 +2478,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#subcommands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subcommands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#front-matter-yaml" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2623,7 +2645,7 @@
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>engrapha<span class="w"> </span>notes.md<span class="w"> </span>--output<span class="w"> </span>notes.pdf<span class="w"> </span>--theme<span class="w"> </span>catppuccin-mocha
 </span></code></pre></div>
-<p>Other supported themes: <code>dark</code>, <code>light</code>, <code>ocean-dark</code>, <code>forest-dark</code>, <code>sunset-dark</code>, <code>midnight-dark</code>, <code>ocean-light</code>, <code>sepia</code>, <code>catppuccin-latte</code>, <code>catppuccin-mocha</code>.</p>
+<p>Other supported themes: <code>dark</code>, <code>light</code>, <code>ocean-dark</code>, <code>forest-dark</code>, <code>sunset-dark</code>, <code>midnight-dark</code>, <code>ocean-light</code>, <code>sepia</code>, <code>catppuccin-latte</code>, <code>catppuccin-mocha</code>, <code>notion</code>, <code>github</code>, <code>linear</code>, <code>academic</code>, <code>textbook</code>.</p>
 <h2 id="cli-reference">CLI Reference<a class="headerlink" href="#cli-reference" title="Permanent link">&para;</a></h2>
 <h3 id="basic-usage">Basic usage<a class="headerlink" href="#basic-usage" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>engrapha<span class="w"> </span>input.md<span class="w"> </span>-o<span class="w"> </span>output.pdf<span class="w"> </span>-t<span class="w"> </span>catppuccin-mocha<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;My Notes&quot;</span><span class="w"> </span>--author<span class="w"> </span><span class="s2">&quot;Your Name&quot;</span>
@@ -2639,7 +2661,7 @@
 <tbody>
 <tr>
 <td><code>input</code></td>
-<td>Required: path to input <code>.md</code> file</td>
+<td>Required: path to input <code>.md</code> file (not needed for utility subcommands/flags).</td>
 </tr>
 <tr>
 <td><code>-o, --output</code></td>
@@ -2657,8 +2679,44 @@
 <td><code>--author</code></td>
 <td>Document author metadata.</td>
 </tr>
+<tr>
+<td><code>--info</code></td>
+<td>Print comprehensive package usage guide and API documentation.</td>
+</tr>
+<tr>
+<td><code>--version</code></td>
+<td>Print package version. Can be used with <code>-v</code> / <code>--verbose</code> for detailed environment information.</td>
+</tr>
+<tr>
+<td><code>-v, --verbose</code></td>
+<td>Show verbose/detailed environment logs when combined with <code>--version</code>.</td>
+</tr>
+<tr>
+<td><code>--list</code></td>
+<td>List all themes, cover presets, and examples in one view.</td>
+</tr>
+<tr>
+<td><code>--themes</code></td>
+<td>List all available theme names with background colors.</td>
+</tr>
+<tr>
+<td><code>--doctor</code></td>
+<td>Run comprehensive system and dependency check.</td>
+</tr>
+<tr>
+<td><code>--examples</code></td>
+<td>List all reference templates, or fetch/view one by name.</td>
+</tr>
+<tr>
+<td><code>--save</code></td>
+<td>Must be used with <code>--examples &lt;filename&gt;</code>. Saves the fetched example directly to the CWD.</td>
+</tr>
 </tbody>
 </table>
+<h3 id="subcommands">Subcommands<a class="headerlink" href="#subcommands" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>engrapha init [directory]</code></strong>: Initializes a starter notes project in the specified folder (defaults to <code>./my-docs</code>). Scaffolds directories (<code>assets/</code>, <code>images/</code>, <code>output/</code>) and configures <code>notes.py</code> and <code>README.md</code>.</li>
+</ul>
 <h3 id="front-matter-yaml">Front matter (YAML)<a class="headerlink" href="#front-matter-yaml" title="Permanent link">&para;</a></h3>
 <p>Optional YAML front matter at the top of the file:</p>
 <div class="language-markdown highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>---

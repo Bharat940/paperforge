@@ -2680,7 +2680,7 @@
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">flow</span><span class="o">.</span><span class="n">edge</span><span class="p">(</span><span class="s2">&quot;chk&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s2">&quot;yes&quot;</span><span class="p">)</span>
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">flow</span><span class="o">.</span><span class="n">edge</span><span class="p">(</span><span class="s2">&quot;chk&quot;</span><span class="p">,</span> <span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s2">&quot;no&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-<p>Auto-layout only works when every x, y is <code>None</code>. If you specify even one coordinate, you must provide all of them.</p>
+<p>Nodes with <code>x=None, y=None</code> (the default) are auto-placed. Nodes with explicit coordinates are pinned in place. Mixing manual and auto placement is supported — only nodes where both <code>x</code> and <code>y</code> are <code>None</code> are repositioned by the layout engine.</p>
 <h2 id="parameters-reference">Parameters reference<a class="headerlink" href="#parameters-reference" title="Permanent link">&para;</a></h2>
 <h3 id="flowchart-constructor">Flowchart constructor<a class="headerlink" href="#flowchart-constructor" title="Permanent link">&para;</a></h3>
 <table>
@@ -2728,7 +2728,7 @@
 <li><code>connector(id, label, x=None, y=None)</code></li>
 <li><code>predefined(id, label, x=None, y=None)</code></li>
 <li><code>custom(id, label, x=None, y=None, custom_draw=None)</code></li>
-<li><code>edge(from, to, label="", branch="", path=None, orthogonal=False)</code></li>
+<li><code>edge(from_id, to_id, label="", branch="", path=None, orthogonal=False)</code></li>
 </ul>
 <h2 id="output">Output<a class="headerlink" href="#output" title="Permanent link">&para;</a></h2>
 <p>Call <code>diagram.save("file.pdf")</code> for vector-only exports. Use <code>en.add(diagram.as_flowable())</code> for PDF embedding.</p>

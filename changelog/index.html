@@ -2152,15 +2152,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#011-2026-07-06" class="md-nav__link">
+  <a href="#012-2026-07-13-cli-documentation-release" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [0.1.1] - 2026-07-06
+        [0.1.2] - 2026-07-13 — CLI &amp; Documentation Release
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[0.1.1] - 2026-07-06">
+    <nav class="md-nav" aria-label="[0.1.2] - 2026-07-13 — CLI &amp; Documentation Release">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2176,6 +2176,45 @@
         
           <li class="md-nav__item">
   <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#011-2026-07-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.1.1] - 2026-07-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.1.1] - 2026-07-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Fixed
@@ -2378,15 +2417,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#011-2026-07-06" class="md-nav__link">
+  <a href="#012-2026-07-13-cli-documentation-release" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [0.1.1] - 2026-07-06
+        [0.1.2] - 2026-07-13 — CLI &amp; Documentation Release
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="[0.1.1] - 2026-07-06">
+    <nav class="md-nav" aria-label="[0.1.2] - 2026-07-13 — CLI &amp; Documentation Release">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2402,6 +2441,45 @@
         
           <li class="md-nav__item">
   <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#011-2026-07-06" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0.1.1] - 2026-07-06
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[0.1.1] - 2026-07-06">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
     <span class="md-ellipsis">
       
         Fixed
@@ -2508,15 +2586,28 @@
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
 <p>All notable changes to Engrapha are documented here. Engrapha follows <a href="https://semver.org/">Semantic Versioning</a>.</p>
 <h2 id="unreleased">[Unreleased]<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
-<h2 id="011-2026-07-06">[0.1.1] - 2026-07-06<a class="headerlink" href="#011-2026-07-06" title="Permanent link">&para;</a></h2>
+<h2 id="012-2026-07-13-cli-documentation-release">[0.1.2] - 2026-07-13 — CLI &amp; Documentation Release<a class="headerlink" href="#012-2026-07-13-cli-documentation-release" title="Permanent link">&para;</a></h2>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Dynamic List Flag (<code>--list</code>):</strong> Added a new CLI flag to display all available themes, cover presets, and examples in a single command.</li>
+<li><strong>Verbose Version Flag (<code>--version --verbose</code>):</strong> Extended the version flag to print the Python environment, ReportLab/Pygments versions, and the check/cross status of optional dependency groups.</li>
+<li><strong>PDF Metadata Engine Versioning:</strong> Automatically writes the compiling Engrapha library version (<code>Generated with Engrapha 0.1.2</code>) into the Creator and Producer metadata fields of all compiled PDFs.</li>
+</ul>
+<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>API Signatures CLI Docs Synchronization:</strong> Fixed out-of-sync API parameter names and signatures in the CLI <code>--info</code> guide (including <code>definition</code>, <code>theorem</code>, <code>frame_format</code>, <code>packet_format</code>, <code>revision_card</code>, and <code>mcq</code>) that were causing autonomous coding agents to invoke functions with incorrect parameters.</li>
+<li><strong>TOC Double Page Breaks:</strong> Explicitly documented in <code>toc()</code> docstring that it automatically appends a page break (<code>en.br()</code>) at the end, preventing empty blank pages when compiling.</li>
+<li><strong>Text-Icon Filtering on Covers:</strong> Enhanced <code>cover_card</code> rendering to filter out and ignore multi-character ASCII names (like <code>"gear"</code>, <code>"code"</code>) passed to the <code>icon</code> parameter, preventing literal words from drawing on the cover page.</li>
+</ul>
+<h2 id="011-2026-07-06">[0.1.1] - 2026-07-06<a class="headerlink" href="#011-2026-07-06" title="Permanent link">&para;</a></h2>
+<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Documentation Website:</strong> Completed and deployed the official MkDocs documentation site using the Material theme.</li>
 <li><strong>Cover Page Raster Image Support:</strong> Added native support for PNG, JPG, and JPEG files on cover page logo and banner elements. Dimensions are automatically inspected using <code>ImageReader</code> to calculate scale heights proportionally, preserving image aspect ratio.</li>
 <li><strong>Balanced Cover Page Spacing:</strong> Implemented dynamic top-margin scaling on the cover page when a logo is active to prevent the main title from being pushed too far down, maintaining a balanced, professional first-page layout.</li>
 <li><strong>State Machine Rendering Aesthetics:</strong> Improved state transition diagram layouts by introducing symmetric self-loop arcs with solid arrowheads, centered labels, and automatic centerline alignment for sequential state chains. Bidirectional and skipped-node transition arcs have been made sleeker and more balanced.</li>
 </ul>
-<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<h3 id="fixed_1">Fixed<a class="headerlink" href="#fixed_1" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>Preset Property Forwarding:</strong> Fixed a configuration forwarding issue in <code>cover_preset</code> to ensure custom banner, logo, and alignment configurations are correctly passed to <code>cover_card</code> instead of being dropped. Added <code>**extra</code> to <code>cover_card</code> to absorb and ignore legacy layout parameters (such as <code>meta</code>) passed by preset templates.</li>
 <li><strong>Layout and Typography Enhancements:</strong> Resolved ReportLab's layout spacing gaps around inline equations and code fragments by updating the default paragraph alignment for body, definition, and proof blocks to left-alignment (<code>TA_LEFT</code>).</li>
