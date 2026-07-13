@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "engrapha-notes"
-version = "0.1.1"
+version = "0.1.2"
 description = "Themed ReportLab notes toolkit with markdown, HTML, PPTX, and flashcard exports"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -20,7 +20,7 @@ dependencies = [
     "reportlab>=4.5.1",
     "pygments>=2.20.0",
     "matplotlib>=3.10",
-    "engrapha-diagrams>=0.1.1",
+    "engrapha-diagrams>=0.1.2",
 ]
 
 [project.optional-dependencies]

@@ -81,7 +81,7 @@ flow.edge("chk", "c", branch="yes")
 flow.edge("chk", "e", branch="no")
 ```
 
-Auto-layout only works when every x, y is `None`. If you specify even one coordinate, you must provide all of them.
+Nodes with `x=None, y=None` (the default) are auto-placed. Nodes with explicit coordinates are pinned in place. Mixing manual and auto placement is supported — only nodes where both `x` and `y` are `None` are repositioned by the layout engine.
 
 ## Parameters reference
 
@@ -104,7 +104,7 @@ Auto-layout only works when every x, y is `None`. If you specify even one coordi
 - `connector(id, label, x=None, y=None)`
 - `predefined(id, label, x=None, y=None)`
 - `custom(id, label, x=None, y=None, custom_draw=None)`
-- `edge(from, to, label="", branch="", path=None, orthogonal=False)`
+- `edge(from_id, to_id, label="", branch="", path=None, orthogonal=False)`
 
 ## Output
 

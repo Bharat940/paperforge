@@ -600,6 +600,11 @@ def compile_markdown_to_pdf(
         "sepia": en.SEPIA,
         "catppuccin-latte": en.CATPPUCCIN_LATTE,
         "catppuccin-mocha": en.CATPPUCCIN_MOCHA,
+        "notion": en.NOTION,
+        "github": en.GITHUB,
+        "linear": en.LINEAR,
+        "academic": en.ACADEMIC,
+        "textbook": en.TEXTBOOK,
     }
 
     theme_obj = all_themes.get(doc_theme, en.DARK)
@@ -877,28 +882,28 @@ GLOBAL FORMATTING & LAYOUT:
     Hides page footers on the active page (or all pages if page_only=False).
 
 COVER PAGES:
-  - en.cover_preset(preset_name, title, subtitle="", author="", date="")
+  - en.cover_preset(preset_name, **kwargs)
     Presets: 'engineering', 'research-paper', 'course-notes', 'networking', 'database', 'programming'.
-  - en.cover_card(title, subtitle="", author="", date="", cover_theme="linear", icon="", tags=[],
-                  logo_svg=None, logo_width=120.0, banner_svg=None, banner_width=400.0, banner_align="left")
-    Themes: linear, notion, catppuccin, textbook, modern, minimal, corporate, academic, book.
-  - en.cover_image(path, opacity=0.06, placement="background")
+  - en.cover_card(title, subtitle=None, style='standard', author=None, date=None, tags=None, icon=None, cover_theme=None, logo_svg=None, logo_width=120.0, banner_svg=None, banner_width=400.0, banner_align='left', **extra)
+    Styles: standard, modern, minimal, corporate, academic, book. Cover Themes: linear, notion, catppuccin, textbook, academic_modern.
+  - en.cover_image(source, opacity=0.06, placement='bottom-right')
     Faint SVG background backdrop.
 
 HEADINGS & PAGE NAVIGATION:
   - en.toc(style="standard", col_widths=None)
-    Renders TOC. Style: 'standard' or 'index' (grid-based).
-  - en.part_box(title, subtitle="", topics=[])
+    Renders TOC. Style: 'standard', 'minimal', 'detailed', 'grid', 'index', 'flexible_grid'.
+    Note: This function automatically appends a page break (en.br()) at the end.
+  - en.part_box(text, subtitle=None, topics=None)
     Full-page part separator screen.
-  - en.chap_box(title, subtitle="")
+  - en.chap_box(text, bookmark=True)
     Chapter title block.
-  - en.section(title)
+  - en.section(text, bookmark=True, keep_with_next=True)
     Section header.
-  - en.subsection(title)
+  - en.subsection(text, bookmark=True)
     Subsection header.
   - en.br()
     Forces a page break.
-  - en.sp(height_in_points)
+  - en.sp(h=8)
     Inserts a vertical spacer.
 
 BODY ELEMENTS & CALLOUTS:
@@ -918,13 +923,13 @@ BODY ELEMENTS & CALLOUTS:
     Image loader with automatic URL caching, fallback lists, and missing placeholders.
   - en.warning(text), en.note(text), en.tip(text), en.important(text)
     Semantic callout cards.
-  - en.definition(title, text), en.theorem(title, text), en.proof(text)
+  - en.definition(text, bg=None, border=None), en.theorem(text), en.proof(text)
     Academic callout blocks.
-  - en.frame_format(title, fields)
+  - en.frame_format(caption, fields)
     Renders protocol frame segments. fields is a list of (label, bytes_desc).
-  - en.packet_format(title, fields, bit_ruler=True)
+  - en.packet_format(caption, fields, bit_ruler=True)
     Renders network packet structures. fields is list of (label, bit_width).
-  - en.revision_card(title, items)
+  - en.revision_card(title, points)
      Revision checklist card.
 
 ACTIVE RECALL & EXPORT:
@@ -932,7 +937,7 @@ ACTIVE RECALL & EXPORT:
     Defines a flashcard study question. Gathered for Anki APKG compiler.
   - en.question(text), en.answer(text), en.qbox(text)
     Study questions layout.
-  - en.mcq(question, options, correct_index)
+  - en.mcq(question_text, options, correct_index=None)
     Multiple choice question layout.
 
 CROSS-REFERENCING:
@@ -1276,8 +1281,462 @@ Valid configuration keys at the start of any block (no spaces around '='):
     print(guide)
 
 
+def run_init(directory: str) -> None:
+    print(f"Initializing a new Engrapha project in: {directory}...")
+    try:
+        os.makedirs(os.path.join(directory, "assets"), exist_ok=True)
+        os.makedirs(os.path.join(directory, "images"), exist_ok=True)
+        os.makedirs(os.path.join(directory, "output"), exist_ok=True)
+
+        notes_content = """# Minimal Engrapha notes compile script
+import engrapha_notes as en
+import engrapha_diagrams as ed
+
+# Setup a clean textbook theme
+en.set_theme(en.TEXTBOOK)
+
+en.set_global_header(
+    left="Project Notes",
+    center="B.Tech Computer Science",
+    right="2026"
+)
+en.set_global_footer(
+    left="Engrapha Starter",
+    right="Unit I",
+    show_page_num=True
+)
+
+# Cover preset
+en.cover_preset(
+    "engineering",
+    title="My Course Notes",
+    subtitle="Unit I: Getting Started with Engrapha",
+    author="Your Name",
+    date="July 2026"
+)
+en.br()
+
+en.toc()
+
+# Content
+en.part_box(
+    "Unit I: Introduction",
+    subtitle="Basic document structure and typography helpers",
+    topics=["1. Hello World", "2. Core Typography"]
+)
+
+en.chap_box("Chapter 1: Hello World")
+en.section("1.1 Starter Section")
+en.body(
+    "Welcome to your first Engrapha compiled document! "
+    "You can write standard paragraphs, equations, callouts, and embed native vector diagrams."
+)
+
+en.note("Tip: Edit this script to add more sections, tables, math formulas, and flowcharts.")
+
+# Build Output
+en.build_doc("output/notes.pdf")
+print("PDF compiled successfully under output/notes.pdf!")
+"""
+        with open(os.path.join(directory, "notes.py"), "w", encoding="utf-8") as f:
+            f.write(notes_content)
+
+        readme_content = """# Engrapha Starter Project
+
+This project structure was generated automatically using `engrapha init`.
+
+## Project Structure
+- `notes.py`: The main Python compilation script. Run this to generate your PDF notes.
+- `assets/`: Folder for extra document templates, styles, or configuration.
+- `images/`: Put local images (PNG, JPG, SVG) here to reference them in `notes.py`.
+- `output/`: Folder where output PDFs and other export files are generated.
+
+## Getting Started
+To compile the PDF, run:
+```bash
+python notes.py
+```
+After execution, you will find `output/notes.pdf`.
+"""
+        with open(os.path.join(directory, "README.md"), "w", encoding="utf-8") as f:
+            f.write(readme_content)
+
+        print("[OK] Created notes.py")
+        print("[OK] Created README.md")
+        print("[OK] Created assets/, images/, output/ directories")
+        print(
+            f"Project initialized successfully. To compile, run:\n  cd {directory}\n  python notes.py"
+        )
+    except Exception as e:
+        print(f"Error initializing project: {e}")
+
+
+def run_doctor() -> None:
+    print("engrapha doctor - dependency check")
+
+    # 1. Python version
+    import platform
+
+    py_ver = platform.python_version()
+    print(f"  [OK] Python {py_ver}")
+
+    # 2. ReportLab
+    try:
+        import reportlab
+
+        print(f"  [OK] reportlab {getattr(reportlab, '__version__', 'installed')}")
+    except ImportError:
+        print("  [Missing] reportlab")
+
+    # 3. Matplotlib
+    try:
+        import matplotlib
+
+        print(f"  [OK] matplotlib {getattr(matplotlib, '__version__', 'installed')}")
+    except ImportError:
+        print("  [Missing] matplotlib")
+
+    # 4. Pygments
+    try:
+        import pygments
+
+        print(f"  [OK] pygments {getattr(pygments, '__version__', 'installed')}")
+    except ImportError:
+        print("  [Missing] pygments")
+
+    # 5. engrapha_diagrams
+    try:
+        import engrapha_diagrams
+
+        print(
+            f"  [OK] engrapha_diagrams {getattr(engrapha_diagrams, '__version__', 'installed')}"
+        )
+    except ImportError:
+        print("  [Missing] engrapha_diagrams")
+
+    # 6. Pydantic
+    try:
+        import pydantic
+
+        print(f"  [OK] pydantic {getattr(pydantic, '__version__', 'installed')}")
+    except ImportError:
+        print("  [Missing] pydantic")
+
+    # 7. svglib (optional)
+    try:
+        import svglib  # noqa: F401
+
+        print("  [OK] svglib             [optional: svg]")
+    except ImportError:
+        print(
+            '  [Missing] svglib             [optional: svg]   -> pip install "engrapha-notes[svg]"'
+        )
+
+    # 8. python-pptx (optional)
+    try:
+        import pptx  # noqa: F401
+
+        print("  [OK] python-pptx        [optional: pptx]")
+    except ImportError:
+        print(
+            '  [Missing] python-pptx        [optional: pptx]  -> pip install "engrapha-notes[pptx]"'
+        )
+
+    # 9. PyMuPDF (optional)
+    try:
+        import fitz  # noqa: F401
+
+        print("  [OK] PyMuPDF            [optional: split]")
+    except ImportError:
+        print(
+            '  [Missing] PyMuPDF            [optional: split] -> pip install "engrapha-notes[split]"'
+        )
+
+    # 10. genanki (optional)
+    try:
+        import genanki  # noqa: F401
+
+        print("  [OK] genanki            [optional: flashcards]")
+    except ImportError:
+        print(
+            '  [Missing] genanki            [optional: flashcards] -> pip install "engrapha-notes[flashcards]"'
+        )
+
+    # 11. Cache directory
+    cache_dir = os.path.join(os.getcwd(), ".engrapha_cache")
+    print(f"  [OK] Cache dir: {cache_dir}")
+
+    # 12. Font availability
+    try:
+        from reportlab.pdfbase import pdfmetrics  # noqa: F401
+        from reportlab.pdfbase.ttfonts import TTFont  # noqa: F401
+
+        print("  [OK] Font: Helvetica / Courier / Times-Roman available")
+    except Exception as e:
+        print(f"  [Error] Font check failed: {e}")
+
+
+def print_themes() -> None:
+    print("Available themes:")
+    for theme in en.ALL_THEMES:
+        option_name = theme.name.lower().replace(" ", "-").replace("_", "-")
+        print(f"  {option_name:<20} bg={theme.bg:<9} {theme.name} mode")
+
+
+EXAMPLES_CATALOG = {
+    # Core Examples
+    "getting_started.py": (
+        "examples/getting_started.py",
+        "Minimal 20-line compilation template",
+    ),
+    "basic_notes.py": (
+        "examples/basic_notes.py",
+        "Showcase of headings, body, callouts, and tables",
+    ),
+    "formulas.py": (
+        "examples/formulas.py",
+        "LaTeX math formulas, theorems, and proofs",
+    ),
+    "diagrams.py": (
+        "examples/diagrams.py",
+        "Showcase of Flowchart, StateMachine, Sequence, and ER diagrams",
+    ),
+    "markdown_cli.py": (
+        "examples/markdown_cli.py",
+        "Shows how to compile Markdown files programmatically",
+    ),
+    "demo_comprehensive.py": (
+        "examples/demo_comprehensive.py",
+        "Full textbook reference notes example",
+    ),
+    # Subject Specific
+    "dsa_notes.py": (
+        "examples/subject/dsa_notes.py",
+        "Comprehensive DSA study guide and complexity tables",
+    ),
+    "networking_notes.py": (
+        "examples/subject/networking_notes.py",
+        "OSI stack models and TCP handshake flowcharts",
+    ),
+    "database_notes.py": (
+        "examples/subject/database_notes.py",
+        "ER diagrams, schema layouts, and SQL syntax",
+    ),
+    # AI-Friendly Templates
+    "semester_notes.py": (
+        "examples/ai/semester_notes.py",
+        "Pitch Black TOC semester study notes",
+    ),
+    "course_notes.py": (
+        "examples/ai/course_notes.py",
+        "Generic clean course notes outline structure",
+    ),
+    "study_guide.py": (
+        "examples/ai/study_guide.py",
+        "Revision cards, multiple-choice questions, and flashcard exports",
+    ),
+    "question_bank.py": (
+        "examples/ai/question_bank.py",
+        "Solved interview Q&A blocks and qbox template",
+    ),
+}
+
+
+def print_examples(filename: Optional[str] = None, save: bool = False) -> None:
+    if not filename:
+        print("Engrapha Reference & Template Examples:")
+        print("To view or fetch/save a specific example, run:")
+        print("  engrapha --examples <filename>\n")
+
+        categories = {
+            "Core Examples": [
+                "getting_started.py",
+                "basic_notes.py",
+                "formulas.py",
+                "diagrams.py",
+                "markdown_cli.py",
+                "demo_comprehensive.py",
+            ],
+            "Subject-Specific Notes": [
+                "dsa_notes.py",
+                "networking_notes.py",
+                "database_notes.py",
+            ],
+            "AI-Friendly Templates": [
+                "semester_notes.py",
+                "course_notes.py",
+                "study_guide.py",
+                "question_bank.py",
+            ],
+        }
+
+        for cat_name, file_keys in categories.items():
+            print(f"{cat_name}:")
+            for key in file_keys:
+                if key in EXAMPLES_CATALOG:
+                    path, desc = EXAMPLES_CATALOG[key]
+                    print(f"  - {key:<25} # {desc}")
+            print()
+        return
+
+    # User specified a filename
+    key = filename.strip()
+    if key not in EXAMPLES_CATALOG:
+        print(f"Error: Example '{key}' not found in the catalog.")
+        print("Use 'engrapha --examples' to list all valid options.")
+        return
+
+    rel_path, desc = EXAMPLES_CATALOG[key]
+    url = f"https://raw.githubusercontent.com/Bharat940/engrapha/main/{rel_path}"
+
+    print(f"Fetching example '{key}' from GitHub...")
+    print(f"URL: {url}\n")
+
+    try:
+        import urllib.request
+
+        with urllib.request.urlopen(url, timeout=10) as response:
+            content_bytes = response.read()
+            content_str = content_bytes.decode("utf-8")
+    except Exception as e:
+        print(f"Error: Failed to fetch example from GitHub ({e}).")
+        print("Please check your internet connection and try again.")
+        return
+
+    # Print with syntax highlighting if pygments is available
+    try:
+        from pygments import highlight
+        from pygments.lexers import PythonLexer
+        from pygments.formatters import TerminalFormatter
+
+        print(highlight(content_str, PythonLexer(), TerminalFormatter()))
+    except ImportError:
+        print(content_str)
+
+    if save:
+        try:
+            with open(key, "w", encoding="utf-8") as f:
+                f.write(content_str)
+            print(f"[OK] Example saved successfully to: {os.path.abspath(key)}")
+        except Exception as e:
+            print(f"Error saving file: {e}")
+        return
+
+    # Ask the user if they want to save it locally
+    try:
+        save_choice = (
+            input(f"\nSave this example to your current directory as '{key}'? (y/N): ")
+            .strip()
+            .lower()
+        )
+        if save_choice in ("y", "yes"):
+            with open(key, "w", encoding="utf-8") as f:
+                f.write(content_str)
+            print(f"[OK] Example saved successfully to: {os.path.abspath(key)}")
+    except Exception:
+        pass
+
+
+def print_list() -> None:
+    print("Themes")
+    print("------")
+    for theme in en.ALL_THEMES:
+        option_name = theme.name.lower().replace(" ", "-").replace("_", "-")
+        print(f"  - {option_name}")
+    print()
+
+    print("Cover presets")
+    print("-------------")
+    for preset in sorted(en.available_presets()):
+        print(f"  - {preset}")
+    print()
+
+    print("Examples")
+    print("--------")
+    categories = {
+        "Core Examples": [
+            "getting_started.py",
+            "basic_notes.py",
+            "formulas.py",
+            "diagrams.py",
+            "markdown_cli.py",
+            "demo_comprehensive.py",
+        ],
+        "Subject-Specific Notes": [
+            "dsa_notes.py",
+            "networking_notes.py",
+            "database_notes.py",
+        ],
+        "AI-Friendly Templates": [
+            "semester_notes.py",
+            "course_notes.py",
+            "study_guide.py",
+            "question_bank.py",
+        ],
+    }
+    for cat_name, file_keys in categories.items():
+        for key in file_keys:
+            print(f"  - {key}")
+
+
+def print_verbose_version() -> None:
+    import sys
+    import reportlab
+    import pygments
+
+    def safe_char(char: str, fallback: str) -> str:
+        try:
+            char.encode(sys.stdout.encoding or "ascii")
+            return char
+        except UnicodeEncodeError:
+            return fallback
+
+    ok_char = safe_char("✓", "[OK]")
+    missing_char = safe_char("✗", "[Missing]")
+
+    print(f"Engrapha {en.__version__}\n")
+    print(f"Python {sys.version.split()[0]}")
+    print(f"ReportLab {getattr(reportlab, '__version__', 'unknown')}")
+    print(f"Pygments {getattr(pygments, '__version__', 'unknown')}\n")
+
+    print("Optional")
+
+    try:
+        import svglib  # noqa: F401
+
+        print(f"  {ok_char} svglib")
+    except ImportError:
+        print(f"  {missing_char} svglib")
+
+    try:
+        import genanki  # noqa: F401
+
+        print(f"  {ok_char} genanki")
+    except ImportError:
+        print(f"  {missing_char} genanki")
+
+    try:
+        import pptx  # noqa: F401
+
+        print(f"  {ok_char} python-pptx")
+    except ImportError:
+        print(f"  {missing_char} python-pptx")
+
+    try:
+        import fitz  # noqa: F401
+
+        print(f"  {ok_char} pymupdf")
+    except ImportError:
+        print(f"  {missing_char} pymupdf")
+
+
 def main() -> None:
     """CLI entrypoint."""
+    if len(sys.argv) > 1 and sys.argv[1] == "init":
+        target_dir = sys.argv[2] if len(sys.argv) > 2 else "my-docs"
+        run_init(target_dir)
+        sys.exit(0)
+
     parser = argparse.ArgumentParser(
         description="Compile Markdown documents to themed ReportLab PDFs with native diagrams."
     )
@@ -1300,8 +1759,68 @@ def main() -> None:
         action="store_true",
         help="Print comprehensive package usage guide and API documentation.",
     )
+    parser.add_argument(
+        "--version",
+        action="store_true",
+        help="Print package version.",
+    )
+    parser.add_argument(
+        "--themes",
+        action="store_true",
+        help="List all available theme names.",
+    )
+    parser.add_argument(
+        "--doctor",
+        action="store_true",
+        help="Run comprehensive system and dependency check.",
+    )
+    parser.add_argument(
+        "--examples",
+        nargs="?",
+        const="",
+        help="List available examples, or view/fetch one by name (e.g. --examples getting_started.py).",
+    )
+    parser.add_argument(
+        "--save",
+        action="store_true",
+        help="Save the fetched example directly to the current working directory without prompting.",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Print verbose version information (use with --version).",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="List all themes, cover presets, and examples in one view.",
+    )
 
     args = parser.parse_args()
+
+    if args.version:
+        if args.verbose:
+            print_verbose_version()
+        else:
+            print(f"engrapha-notes {en.__version__}")
+        sys.exit(0)
+
+    if args.list:
+        print_list()
+        sys.exit(0)
+
+    if args.themes:
+        print_themes()
+        sys.exit(0)
+
+    if args.doctor:
+        run_doctor()
+        sys.exit(0)
+
+    if args.examples is not None:
+        print_examples(args.examples, save=args.save)
+        sys.exit(0)
 
     if args.info:
         print_package_help()

@@ -21,7 +21,7 @@ def main() -> None:
         "Engrapha Comprehensive Demo",
         "One source exported to PDF, HTML, PPTX, and flashcards",
         cover_theme="diagram",
-        bg_svg="C:\\Dev\\notes\\asset_images\\paper-and-pen-svgrepo-com.svg",
+        bg_svg="asset_images/paper-and-pen-svgrepo-com.svg",
         banner_svg="assets/engrapha_banner_black.svg",
         banner_width=420.0,
         logo_svg="assets/engrapha_icon_black.svg",

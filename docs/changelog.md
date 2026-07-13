@@ -4,6 +4,18 @@ All notable changes to Engrapha are documented here. Engrapha follows [Semantic 
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-13 — CLI & Documentation Release
+
+### Added
+- **Dynamic List Flag (`--list`):** Added a new CLI flag to display all available themes, cover presets, and examples in a single command.
+- **Verbose Version Flag (`--version --verbose`):** Extended the version flag to print the Python environment, ReportLab/Pygments versions, and the check/cross status of optional dependency groups.
+- **PDF Metadata Engine Versioning:** Automatically writes the compiling Engrapha library version (`Generated with Engrapha 0.1.2`) into the Creator and Producer metadata fields of all compiled PDFs.
+
+### Fixed
+- **API Signatures CLI Docs Synchronization:** Fixed out-of-sync API parameter names and signatures in the CLI `--info` guide (including `definition`, `theorem`, `frame_format`, `packet_format`, `revision_card`, and `mcq`) that were causing autonomous coding agents to invoke functions with incorrect parameters.
+- **TOC Double Page Breaks:** Explicitly documented in `toc()` docstring that it automatically appends a page break (`en.br()`) at the end, preventing empty blank pages when compiling.
+- **Text-Icon Filtering on Covers:** Enhanced `cover_card` rendering to filter out and ignore multi-character ASCII names (like `"gear"`, `"code"`) passed to the `icon` parameter, preventing literal words from drawing on the cover page.
+
 ## [0.1.1] - 2026-07-06
 
 ### Added

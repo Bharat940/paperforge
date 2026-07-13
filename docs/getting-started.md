@@ -50,6 +50,30 @@ The monorepo is split into two packages. You can install them separately dependi
 | **CLI Compiler** | No | Yes (`Engrapha` / `pdfnotes` compiling markdown to PDF) |
 
 
+## CLI Scaffolding & Utility Commands
+
+Engrapha provides CLI commands to quickly set up, explore, and download templates.
+
+### 1. Initialize a Starter Project
+To create a fully configured starter project structure automatically, run:
+```bash
+engrapha init my-docs
+```
+This creates a `./my-docs` directory containing:
+*   `notes.py`: A complete starter compilation script.
+*   `README.md`: Getting started guide.
+*   Folders for assets, images, and output.
+
+### 2. Fetch Reference Examples & Templates
+To list all available academic templates and subject-specific notes from the cloud:
+```bash
+engrapha --examples
+```
+To view or save a specific template directly to your current directory (non-interactively):
+```bash
+engrapha --examples getting_started.py --save
+```
+
 ## 5-Line Quickstart
 
 ```python

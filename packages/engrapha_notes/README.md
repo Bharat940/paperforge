@@ -437,18 +437,19 @@ engrapha --info
 * `-t, --theme`: Theme name (default: `dark`).
 * `--title`: Custom document title.
 * `--author`: Custom document author.
+* `--info`: Print comprehensive package usage guide and API documentation.
+* `--version`: Print package version. Combine with `-v` / `--verbose` for detailed environment information.
+* `--list`: List all themes, cover presets, and examples in one view.
+* `--themes`: List all available theme names with background colors.
+* `--doctor`: Run system diagnostic and check required/optional dependencies.
+* `--examples [filename]`: List available examples or download/fetch one by name.
+* `--save`: Save the fetched example directly to the CWD without prompting (used with `--examples`).
+
+### Subcommands:
+* `engrapha init [directory]`: Initialize a starter notes project structure in the specified folder (defaults to `my-docs`).
 
 ### Supported Themes:
-* `dark` (default)
-* `light`
-* `ocean-dark`
-* `forest-dark`
-* `sunset-dark`
-* `midnight-dark`
-* `ocean-light`
-* `sepia`
-* `catppuccin-latte`
-* `catppuccin-mocha`
+* `dark` (default), `light`, `ocean-dark`, `forest-dark`, `sunset-dark`, `midnight-dark`, `ocean-light`, `sepia`, `catppuccin-latte`, `catppuccin-mocha`, `notion`, `github`, `linear`, `academic`, `textbook`.
 
 ### Alert Boxes Mapping:
 GitHub-style alert blocks are parsed and compiled automatically:

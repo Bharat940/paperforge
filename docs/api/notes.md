@@ -37,6 +37,15 @@ en.set_theme(custom)
 PAGE_W, PAGE_H, PM, CW     # A4 constants
 ```
 
+## Discovery APIs
+
+```python
+en.__version__              # "0.1.2"
+en.available_themes()       # List of all 15 theme name strings
+en.available_presets()      # List of all 13 cover preset names
+en.available_cover_styles() # List of all 14 cover layout style names
+```
+
 ## Story management
 
 ```python

@@ -712,6 +712,8 @@ def build_doc(
         author = "Bharat Dangi"
 
     t = get_theme()
+    from . import __version__
+
     doc = NotesDocTemplate(
         filename,
         pagesize=A4,
@@ -721,6 +723,8 @@ def build_doc(
         bottomMargin=t.bottom_margin,
         title=title,
         author=author,
+        creator=f"Generated with Engrapha {__version__}",
+        producer=f"Generated with Engrapha {__version__}",
     )
 
     # Auto-detect if TableOfContents is present in the story

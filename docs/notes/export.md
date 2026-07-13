@@ -2,6 +2,22 @@
 
 Once your story is assembled, Engrapha can emit PDF, HTML, PPTX, and Anki packages.
 
+## Optional dependencies
+
+Some formats require extra packages. Install them upfront to avoid runtime errors:
+
+| Format | Extra needed | Install command |
+|--------|-------------|-----------------|
+| PDF | *(none)* | `pip install engrapha_notes` |
+| HTML | *(none)* | `pip install engrapha_notes` |
+| PPTX | `python-pptx` | `pip install "engrapha_notes[pptx]"` |
+| Anki `.apkg` | `genanki` | `pip install "engrapha_notes[flashcards]"` |
+| PDF splitting | `pymupdf` | `pip install "engrapha_notes[split]"` |
+| All extras | — | `pip install "engrapha_notes[all]"` |
+
+> [!NOTE]
+> If an optional dependency is missing, Engrapha raises a `RuntimeError` with the exact install command rather than silently failing.
+
 ## PDF
 
 ```python

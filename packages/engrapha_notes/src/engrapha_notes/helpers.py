@@ -255,6 +255,21 @@ class SlideBreak(Flowable):  # type: ignore[misc]
         pass
 
 
+def import_svglib() -> Any:
+    try:
+        from svglib.svglib import svg2rlg
+
+        return svg2rlg
+    except ModuleNotFoundError as e:
+        raise RuntimeError(
+            "SVG rendering requires the optional 'svglib' package.\n"
+            "Install it with:\n\n"
+            'pip install "engrapha-notes[svg]"\n'
+            "or\n"
+            'pip install "engrapha-notes[all]"'
+        ) from e
+
+
 class InlineSVG(Flowable):
     """A flowable that loads an SVG and scales it to a target width."""
 
@@ -269,17 +284,7 @@ class InlineSVG(Flowable):
         import os
 
         if os.path.exists(path):
-            try:
-                from svglib.svglib import svg2rlg
-            except ModuleNotFoundError as e:
-                raise RuntimeError(
-                    "SVG rendering requires the optional 'svglib' package.\n"
-                    "Install it with:\n\n"
-                    "pip install engrapha-notes[svg]\n"
-                    "or\n"
-                    "pip install engrapha-notes[all]"
-                ) from e
-
+            svg2rlg = import_svglib()
             self.drawing = svg2rlg(path)
 
         if self.drawing and self.drawing.width > 0:
@@ -577,53 +582,60 @@ class CoverBackgroundFlowable(Flowable):
 
                 if os.path.exists(self.bg_svg):
                     try:
-                        from svglib.svglib import svg2rlg
-                        from reportlab.graphics import renderPDF
-                        from typing import Any  # noqa: F401
+                        svg2rlg = import_svglib()
+                    except RuntimeError:
+                        raise
+                    except Exception:
+                        svg2rlg = None
 
-                        drawing = svg2rlg(self.bg_svg)
-                        if drawing is not None:
-                            from .helpers import _is_light_color
+                    if svg2rlg is not None:
+                        try:
+                            from reportlab.graphics import renderPDF
+                            from typing import Any  # noqa: F401
 
-                            color_to_apply = (
-                                theme.rl(theme.surface_alt)
-                                if _is_light_color(theme.bg)
-                                else theme.rl(theme.text_dim)
-                            )
+                            drawing = svg2rlg(self.bg_svg)
+                            if drawing is not None:
+                                from .helpers import _is_light_color
 
-                            def recolor(node: Any, color: Any) -> None:
-                                if hasattr(node, "fillColor"):
-                                    node.fillColor = color
-                                if hasattr(node, "strokeColor"):
-                                    node.strokeColor = color
-                                if hasattr(node, "contents"):
-                                    for child in node.contents:
-                                        recolor(child, color)
-
-                            recolor(drawing, color_to_apply)
-
-                            canvas.saveState()
-                            if drawing.width > 0 and drawing.height > 0:
-                                # Scale to fit the page (contain)
-                                scale = min(
-                                    PAGE_W / drawing.width, PAGE_H / drawing.height
+                                color_to_apply = (
+                                    theme.rl(theme.surface_alt)
+                                    if _is_light_color(theme.bg)
+                                    else theme.rl(theme.text_dim)
                                 )
 
-                                # Center vertically and horizontally
-                                scaled_w = drawing.width * scale
-                                scaled_h = drawing.height * scale
-                                dx = (PAGE_W - scaled_w) / 2.0
-                                dy = (PAGE_H - scaled_h) / 2.0
+                                def recolor(node: Any, color: Any) -> None:
+                                    if hasattr(node, "fillColor"):
+                                        node.fillColor = color
+                                    if hasattr(node, "strokeColor"):
+                                        node.strokeColor = color
+                                    if hasattr(node, "contents"):
+                                        for child in node.contents:
+                                            recolor(child, color)
 
-                                canvas.translate(dx, dy)
-                                canvas.scale(scale, scale)
+                                recolor(drawing, color_to_apply)
 
-                            canvas.setFillAlpha(0.4)
-                            canvas.setStrokeAlpha(0.4)
-                            renderPDF.draw(drawing, canvas, 0, 0)
-                            canvas.restoreState()
-                    except Exception:
-                        pass
+                                canvas.saveState()
+                                if drawing.width > 0 and drawing.height > 0:
+                                    # Scale to fit the page (contain)
+                                    scale = min(
+                                        PAGE_W / drawing.width, PAGE_H / drawing.height
+                                    )
+
+                                    # Center vertically and horizontally
+                                    scaled_w = drawing.width * scale
+                                    scaled_h = drawing.height * scale
+                                    dx = (PAGE_W - scaled_w) / 2.0
+                                    dy = (PAGE_H - scaled_h) / 2.0
+
+                                    canvas.translate(dx, dy)
+                                    canvas.scale(scale, scale)
+
+                                canvas.setFillAlpha(0.4)
+                                canvas.setStrokeAlpha(0.4)
+                                renderPDF.draw(drawing, canvas, 0, 0)
+                                canvas.restoreState()
+                        except Exception:
+                            pass
 
         canvas.restoreState()
 
@@ -665,6 +677,7 @@ def cover_card(
         else:
             from reportlab.lib.utils import ImageReader
             from reportlab.platypus import Image as RLImage
+
             try:
                 reader = ImageReader(img_path)
                 iw, ih = reader.getSize()
@@ -673,6 +686,7 @@ def cover_card(
                 return RLImage(img_path, width=target_width, height=target_height)
             except Exception:
                 from reportlab.platypus import Spacer
+
                 return Spacer(1, 0)
 
     add(CoverBackgroundFlowable(effective_style, t_theme, bg_svg=bg_svg))
@@ -771,7 +785,12 @@ def cover_card(
         # Helvetica (base-14 PDF font) only reliably covers Latin-1: 0x20-0xFF.
         has_unsupported_glyph = any(cp > 0xFF for cp in codepoints)
 
-        if has_unsupported_glyph or not codepoints:
+        # Block multi-character ASCII word strings (e.g. "gear", "code") which are not single emojis/icons
+        is_ascii_word = len(literal_chars) > 1 and all(
+            ord(c) < 128 for c in literal_chars
+        )
+
+        if has_unsupported_glyph or not codepoints or is_ascii_word:
             # Skip drawing entirely rather than render a black notdef box.
             # Returning an empty zero-height Spacer keeps call sites unchanged.
             return Spacer(1, 0)
@@ -931,7 +950,9 @@ def cover_card(
             if base_indent > 0:
                 add(Indenter(left=-base_indent))
 
-        banner_h = getattr(banner_flowable, "height", 0) or (banner_width * (640.0 / 1280.0))
+        banner_h = getattr(banner_flowable, "height", 0) or (
+            banner_width * (640.0 / 1280.0)
+        )
         consumed += banner_h + 24.0
 
     flexible_spacer(consumed)
@@ -1022,8 +1043,13 @@ class CoverImageFlowable(Flowable):
         self, svg_path: str, canvas: Any, x: float, y: float, w: float, h: float
     ) -> bool:
         try:
-            from svglib.svglib import svg2rlg  # type: ignore[import, import-untyped, import-not-found]
+            svg2rlg = import_svglib()
+        except RuntimeError:
+            raise
+        except Exception:
+            return False
 
+        try:
             drawing = svg2rlg(svg_path)
             if drawing is not None:
                 from reportlab.graphics import renderPDF
@@ -1236,6 +1262,41 @@ _COVER_PRESETS: dict[str, dict[str, Any]] = {
         "icon": "&#128009;",
         "tags": ["Programming", "Software Engineering", "Clean Code"],
     },
+    "mathematics": {
+        "cover_theme": "academic_modern",
+        "icon": "&#8734;",
+        "tags": ["Mathematics", "Analysis", "Proofs"],
+    },
+    "physics": {
+        "cover_theme": "hero",
+        "icon": "&#9883;",
+        "tags": ["Physics", "Mechanics", "Electrodynamics"],
+    },
+    "chemistry": {
+        "cover_theme": "book",
+        "icon": "&#9879;",
+        "tags": ["Chemistry", "Organic", "Reactions"],
+    },
+    "biology": {
+        "cover_theme": "catppuccin",
+        "icon": "&#127807;",
+        "tags": ["Biology", "Cell Science", "Genetics"],
+    },
+    "operating-systems": {
+        "cover_theme": "linear",
+        "icon": "&#128421;",
+        "tags": ["OS", "Processes", "Memory Management"],
+    },
+    "machine-learning": {
+        "cover_theme": "notion",
+        "icon": "&#129504;",
+        "tags": ["ML", "Neural Networks", "Deep Learning"],
+    },
+    "cybersecurity": {
+        "cover_theme": "hero",
+        "icon": "&#128274;",
+        "tags": ["Security", "Cryptography", "Networks"],
+    },
 }
 
 
@@ -1244,7 +1305,9 @@ def cover_preset(preset_name: str, **kwargs: Any) -> None:
     Apply a predefined cover preset configuration.
 
     Built-in presets: 'engineering', 'research-paper', 'course-notes',
-                       'networking', 'database', 'programming'
+                       'networking', 'database', 'programming', 'mathematics',
+                       'physics', 'chemistry', 'biology', 'operating-systems',
+                       'machine-learning', 'cybersecurity'
 
     Each preset bundles cover_theme, icon, and tags for instant professional covers.
 
@@ -1275,6 +1338,38 @@ def cover_preset(preset_name: str, **kwargs: Any) -> None:
         cover_theme=cover_theme,
         **merged,
     )
+
+
+def available_themes() -> list[str]:
+    """Return list of all available theme names."""
+    from .theme import ALL_THEMES
+
+    return [t.name.lower().replace(" ", "-").replace("_", "-") for t in ALL_THEMES]
+
+
+def available_presets() -> list[str]:
+    """Return list of all available cover preset names."""
+    return list(_COVER_PRESETS.keys())
+
+
+def available_cover_styles() -> list[str]:
+    """Return list of all available cover layout styles."""
+    return [
+        "standard",
+        "minimal",
+        "notion",
+        "catppuccin",
+        "academic_modern",
+        "linear",
+        "gradient",
+        "hero",
+        "textbook",
+        "corporate",
+        "modern",
+        "book",
+        "diagram",
+        "academic",
+    ]
 
 
 def chap_box(text: str, bookmark: bool = True) -> None:
@@ -3071,6 +3166,8 @@ def toc(
     """
     Add a Table of Contents page with clickable links and theme-based styling.
     Supported styles: 'standard', 'minimal', 'detailed', 'grid', 'index', 'flexible_grid'.
+
+    Note: This function automatically appends a page break (en.br()) at the end.
     """
     start_idx = len(story)
 

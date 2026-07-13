@@ -80,7 +80,7 @@ en.add(fc.as_flowable())
 en.build_doc("quickstart.pdf")
 ```
 
-See `examples/demo_dsa.py` for a comprehensive DSA notes example with cover logos, banner illustrations, per-structure visuals, complexity tables, and interview Q&A.
+See `examples/subject/dsa_notes.py` for a comprehensive DSA notes example with cover logos, banner illustrations, per-structure visuals, complexity tables, and interview Q&A.
 
 ## Features
 
@@ -96,6 +96,13 @@ Engrapha acts as a true **Publishing Framework**. It ships with screenshot-worth
 | `networking` | `notion` | 🔗 | CCNA, network diagrams |
 | `database` | `academic_modern` | 🗃️ | Database systems, SQL |
 | `programming` | `linear` | 🐘 | Programming, software engineering |
+| `mathematics` | `academic_modern` | ∞ | Algebra, calculus, calculus notes |
+| `physics` | `hero` | ⚛ | Quantum, thermodynamics notes |
+| `chemistry` | `book` | ⚗ | Chemical equations, lab reports |
+| `biology` | `catppuccin` | 🌿 | Botany, anatomy, zoology notes |
+| `operating-systems` | `linear` | 🖥 | Kernel dev, memory management |
+| `machine-learning` | `notion` | 🧠 | Deep learning, neural networks |
+| `cybersecurity` | `hero` | 🔒 | Cryptography, pen testing |
 
 **Cover Styles** (`en.cover_card(style=...)`):
 | Style | Best For |

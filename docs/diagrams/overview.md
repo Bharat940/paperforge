@@ -68,6 +68,11 @@ diagram = ed.<Diagram>(width=en.CW, height=180, theme=<theme>)
 en.add(diagram.as_flowable())
 ```
 
+`en.add()` accepts either a single `Flowable` or a `list[Flowable]` — both work. It is the **recommended** way to embed diagrams.
+
+> [!NOTE]
+> `as_flowable()` returns a list of flowables. You may also see `en.story.extend(diagram.as_flowable())` in older examples \u2014 this works but bypasses the `add()` wrapper and can break if `set_story()` has not been called. Prefer `en.add()`.
+
 For side-by-side rendering in a table, use the raw drawing:
 
 ```python

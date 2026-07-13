@@ -13,7 +13,7 @@ engrapha --info
 engrapha notes.md --output notes.pdf --theme catppuccin-mocha
 ```
 
-Other supported themes: `dark`, `light`, `ocean-dark`, `forest-dark`, `sunset-dark`, `midnight-dark`, `ocean-light`, `sepia`, `catppuccin-latte`, `catppuccin-mocha`.
+Other supported themes: `dark`, `light`, `ocean-dark`, `forest-dark`, `sunset-dark`, `midnight-dark`, `ocean-light`, `sepia`, `catppuccin-latte`, `catppuccin-mocha`, `notion`, `github`, `linear`, `academic`, `textbook`.
 
 ## CLI Reference
 
@@ -27,11 +27,23 @@ engrapha input.md -o output.pdf -t catppuccin-mocha --title "My Notes" --author 
 
 | Flag | Purpose |
 | ---- | ------- |
-| `input` | Required: path to input `.md` file |
+| `input` | Required: path to input `.md` file (not needed for utility subcommands/flags). |
 | `-o, --output` | Custom output path. Defaults to `input.md` → `input.pdf`. |
 | `-t, --theme` | Theme name. Default: `dark`. |
 | `--title` | Document title metadata. |
 | `--author` | Document author metadata. |
+| `--info` | Print comprehensive package usage guide and API documentation. |
+| `--version` | Print package version. Can be used with `-v` / `--verbose` for detailed environment information. |
+| `-v, --verbose` | Show verbose/detailed environment logs when combined with `--version`. |
+| `--list` | List all themes, cover presets, and examples in one view. |
+| `--themes` | List all available theme names with background colors. |
+| `--doctor` | Run comprehensive system and dependency check. |
+| `--examples` | List all reference templates, or fetch/view one by name. |
+| `--save` | Must be used with `--examples <filename>`. Saves the fetched example directly to the CWD. |
+
+### Subcommands
+
+* **`engrapha init [directory]`**: Initializes a starter notes project in the specified folder (defaults to `./my-docs`). Scaffolds directories (`assets/`, `images/`, `output/`) and configures `notes.py` and `README.md`.
 
 ### Front matter (YAML)
 

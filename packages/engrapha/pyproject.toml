@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "engrapha"
-version = "0.1.1"
+version = "0.1.2"
 description = "Meta-package that installs Engrapha Notes and Engrapha Diagrams."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "engrapha-notes[all]>=0.1.1",
+    "engrapha-notes[all]>=0.1.2",
 ]
 
 [project.urls]

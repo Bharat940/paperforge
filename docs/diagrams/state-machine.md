@@ -64,15 +64,34 @@ sm.state("s0", "Start", initial=True)     # Filled dot + arrow
 sm.state("s3", "End",  accepting=True)    # Double ring
 ```
 
-## Auto layout
+## Layout direction
 
-auto_layout() tries to fit transitions without overlap and switches to vertical mode when horizontal fits poorly.
+By default, `direction=None` lets the diagram auto-choose between horizontal and vertical based on the number of states and transitions.
+
+Force **horizontal** (left-to-right):
+
+```python
+sm = ed.StateMachine(width=420, height=180, direction="LR")
+```
+
+Force **vertical** (top-to-bottom), useful for deep sequential chains:
+
+```python
+sm = ed.StateMachine(width=200, height=340, direction="TB",
+                     caption="Fig: Vertical FSM")
+sm.state("s0", "Start", initial=True)
+sm.state("s1", "Processing")
+sm.state("s2", "Done", accepting=True)
+sm.transition("s0", "s1", label="begin")
+sm.transition("s1", "s2", label="complete")
+en.add(sm.as_flowable())
+```
 
 ## Parameters reference
 
 | Parameter | Default | Purpose |
 | --------- | ------- | ------- |
-| `direction` | `"LR"` (auto-switches to `"TB"`) | `"TB"` or `"LR"` |
+| `direction` | `None` (auto-detect) | `"TB"` for vertical, `"LR"` for horizontal, `None` to auto-choose |
 | `state_r` | `22.0` | Default state circle radius |
 | `state_label_max_width` | `82.0` | Text width cap |
 | `transition_label_max_width` | `96.0` | Label width cap |

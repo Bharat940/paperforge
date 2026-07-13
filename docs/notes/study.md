@@ -63,7 +63,7 @@ The Anki cards support inline `$$ math $$` and HTML formatting.
 Use the Markdown CLI compiler to build full question banks:
 
 ```bash
-Engrapha questions.md --theme light --title "Discrete Math"
+engrapha questions.md --theme light --title "Discrete Math"
 ```
 
 ## Mix and match

@@ -93,6 +93,9 @@ from .helpers import (
     build_split_doc,
     image,
     ImageFlowable,
+    available_themes,
+    available_presets,
+    available_cover_styles,
 )
 from .packet import frame_format, packet_format
 from .palette import BG, CYAN, GREEN, YELLOW, WHITE
@@ -116,9 +119,13 @@ from .styles import (
     BULLET_ST,
 )
 
-
+__version__ = "0.1.2"
 
 __all__ = [
+    "__version__",
+    "available_themes",
+    "available_presets",
+    "available_cover_styles",
     "set_theme",
     "get_theme",
     "NotesTheme",

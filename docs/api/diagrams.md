@@ -50,7 +50,7 @@ Flowchart(width, height, theme=None, caption=None,
 | `connector(id, label, x, y)` | Circle |
 | `predefined(id, label, x, y)` | Double-walled rectangle |
 | `custom(id, label, x, y, custom_draw)` | Your own shape (callback) |
-| `edge(from, to, label="", branch="", path=None, orthogonal=False)` | Directed edge |
+| `edge(from_id, to_id, label="", branch="", path=None, orthogonal=False)` | Directed edge |
 
 ## SequenceDiagram
 

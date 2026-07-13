@@ -12,6 +12,9 @@ en.toc(style="index")           # 'standard', 'minimal', 'detailed', 'grid', 'in
 en.bookmark("Appendix")
 ```
 
+> [!WARNING]
+> `toc()` **automatically appends a page break** at the end. Do **not** call `en.br()` after `en.toc()` — it will produce a blank page.
+
 TOC styles:
 
 | Style | Best for |
@@ -91,11 +94,25 @@ en.print_index()
 ```python
 en.include_chapter("chapter_01.py")       # Run and merge a Python script
 en.include_markdown("chapter_02.md")      # Parse and merge Markdown
-en.build_split_doc(                       # Split into chapter PDFs
-    "output_prefix_",
-    split_by="chapter",                   # 'chapter' or integer
-)
+
+# Split by part boundaries (part_box() dividers)
+en.build_split_doc("output_prefix_", split_by="part")
+
+# Split by chapter boundaries (chap_box() and part_box() dividers)
+en.build_split_doc("output_prefix_", split_by="chapter")
+
+# Split by fixed page interval (requires pymupdf: pip install engrapha-notes[split])
+en.build_split_doc("output_prefix_", page_interval=10)
 ```
+
+`split_by` values:
+
+| Value | Splits at |
+|-------|----------|
+| `"part"` | Every `part_box()` |
+| `"chapter"` | Every `chap_box()` and `part_box()` |
+
+Passing `page_interval=N` (integer) splits the compiled PDF every N pages using PyMuPDF. Install with `pip install engrapha-notes[split]`.
 
 ## Page numbering resets
 

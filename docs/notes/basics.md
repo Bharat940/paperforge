@@ -161,17 +161,28 @@ en.cover_card(
 en.br()
 ```
 
-One-line `cover_preset()` bundles an icon, tags, and style for instant professional covers:
+One-line `cover_preset()` bundles an icon, tags, and style for instant professional covers. It accepts all the same keyword arguments as `cover_card()`, which it forwards internally:
 
 ```python
+# Minimal
 en.cover_preset("engineering", title="Computer Networks", subtitle="Complete Study Guide")
-en.br()
 
-en.cover_preset("networking", title="CCNA Notes", subtitle="Semester IV")
-en.br()
+# Rich — with logo, banner, author, and tags
+en.cover_preset(
+    "engineering",
+    title="Theory of Computation",
+    subtitle="Unit I: Finite Automata & Formal Languages",
+    author="Bharat Dangi",
+    date="July 2026",
+    logo_svg="assets/engrapha_logo.svg",
+    logo_width=120.0,
+    banner_svg="assets/cover_banner.png",   # PNG/JPG also accepted
+    banner_width=380.0,
+    banner_align="center",
+)
 ```
 
-Built-in presets: `engineering`, `research-paper`, `course-notes`, `networking`, `database`, `programming`.
+Built-in presets: `engineering`, `research-paper`, `course-notes`, `networking`, `database`, `programming`, `mathematics`, `physics`, `chemistry`, `biology`, `operating-systems`, `machine-learning`, `cybersecurity`.
 
 `cover_card()` accepts optional `logo_svg`, `logo_width`, `banner_svg`, `banner_width`, and `banner_align` parameters for inline SVG branding:
 
@@ -191,7 +202,10 @@ en.cover_card(
 )
 ```
 
-These require the optional `svglib` package (`pip install engrapha-notes[svg]`).
+SVG files require the optional `svglib` package (`pip install engrapha-notes[svg]`). PNG, JPG, and JPEG raster images work with no extra install.
+
+> [!NOTE]
+> The `icon` parameter in `cover_card()` and `add_cover()` accepts only a **single unicode emoji or an HTML numeric entity** — for example `icon="⚙️"` or `icon="&#128187;"`. Passing a word like `"gear"` or `"code"` will be silently ignored.
 
 Add a faint SVG background illustration with `cover_image()`:
 
